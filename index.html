@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Explore a colorectal cancer screening plan as six floating islands: the problem, a patient navigator program, its impact, how it will be evaluated, and where to get screened in Illinois.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>CRC Screening Island</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a soft pastel sky of floating islands. Quiet cards float at the corners
+   (brand + headline top-left, passport + CTA bottom-left, view controls bottom-right).
+   The island card opens on the right (bottom sheet on phones); the tour shows a caption card
+   at the bottom. One calm, sunny pastel look. */
+:root{
+  color-scheme:light;
+  --sky:#D1DCC9; --card:rgba(250,247,240,.97); --ink:#303D37; --muted:#647069; --line:#DDDCD1; --green:#587763; --green-2:#456552; --pink:#CFAFA3;
+  --c1:#C9ACA4; --c2:#ADC3BD; --c3:#D0C19F; --c4:#BAAEBB; --c5:#B3C3A7; --c6:#CEB9A5;
+  --font:"Noto Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--sky);color:var(--ink);font:15px/1.55 var(--font);overflow:hidden;transition:background .6s}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance;font-weight:600}
+p{margin:0}
+a{color:#596F60;font-weight:600}
+button{font-family:var(--font)}
+:focus-visible{outline:3px solid var(--c3);outline-offset:2px}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
+.ui{position:fixed;z-index:5}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 8px 26px rgba(80,90,60,.08)}
+.brand{top:calc(16px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));padding:12px 18px 12px 12px;display:flex;gap:12px;align-items:center}
+.brand i{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#95AE93,#647E6B);display:grid;place-items:center;flex:none}
+.brand b{font-size:1.15rem;font-weight:600;display:block}
+.brand small{font-size:.62rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.heroX{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted);font-size:.8rem}
+.brand{cursor:pointer}
+.hero{top:calc(102px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));width:340px;padding:20px 22px;display:grid;gap:12px}
+.eyebrow{font-size:.72rem;letter-spacing:.2em;color:var(--muted)}
+.hero h1{font-size:2rem}
+.hero p{font-size:.86rem;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:.72rem;border:1px solid #D8D8CD;border-radius:999px;padding:2px 10px}
+.tags span:first-child{background:#EFE1DC;border-color:#D9BFB7}
+.top-r{top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:8px;align-items:center}
+.pill{font-weight:500;font-size:.88rem;padding:9px 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;box-shadow:0 4px 14px rgba(80,90,60,.06)}
+.pill.sm{padding:4px 10px;font-size:.78rem;border-radius:10px;box-shadow:none}
+.pill[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.explorer{left:max(16px,env(safe-area-inset-left,0px));bottom:calc(98px + env(safe-area-inset-bottom,0px));width:272px;padding:16px 18px;display:grid;gap:10px}
+.explorer .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.explorer b{font-weight:600}
+.explorer p{font-size:.8rem;color:var(--muted)}
+.badges{display:flex;gap:6px}
+.badges button{all:unset;cursor:pointer;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:.7rem;font-weight:600;color:var(--muted);background:#F2F0E9}
+.badges button.on{color:var(--ink);border-color:transparent}
+.badges button:focus-visible{outline:3px solid var(--c3)}
+.cta{left:max(16px,env(safe-area-inset-left,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));width:272px;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-radius:14px;border:0;background:var(--green);color:#fff;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 8px 20px rgba(79,138,74,.28)}
+.cta:hover{background:var(--green-2)}
+.hint{position:fixed;z-index:4;left:330px;bottom:calc(30px + env(safe-area-inset-bottom,0px));font-size:.76rem;background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:10px;color:var(--muted);white-space:nowrap}
+.bot-r{right:max(16px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;gap:8px}
+.lab{position:fixed;z-index:3;transform:translate(-50%,-100%);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:5px 12px 6px;text-align:center;box-shadow:0 6px 16px rgba(80,90,60,.1);cursor:pointer;color:var(--ink);line-height:1.25}
+.lab small{display:block;font-size:.66rem;color:var(--muted)}
+.lab b{font-size:.9rem;font-weight:600}
+.lab.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}
+.lab.seen b::after{content:" ✓";color:var(--green)}
+.panel{top:calc(16px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:380px;max-height:calc(100% - 96px);overflow:auto;display:grid}
+.panel .head{padding:18px 20px 14px;border-radius:20px 20px 0 0;display:grid;gap:3px;position:relative}
+.panel .kick{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;opacity:.85}
+.panel h2{font-size:1.5rem}
+.panel .x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.8);font-weight:600;cursor:pointer;color:var(--ink)}
+.panel .body{padding:16px 20px 20px;display:grid;gap:14px}
+.sec{display:grid;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.sec h3{font-size:1rem}
+.panel ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.stats div{background:#EBEDE5;border-radius:12px;padding:10px 12px}
+.stats b{display:block;font-size:1.45rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.stats span{font-size:.78rem;color:var(--muted)}
+.cite{font-size:.76rem;color:var(--muted)}
+.conn{background:#F1E8E1;border-radius:12px;padding:10px 12px;font-size:.86rem}
+.conn b{font-weight:600}
+.navrow{display:flex;flex-wrap:wrap;gap:8px}
+.go{font-weight:600;font-size:.9rem;padding:10px 16px;border-radius:12px;border:0;background:var(--green);color:#fff;cursor:pointer}
+.prompt{background:#EBEDE5;border-radius:12px;padding:12px;font:500 .8rem/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.textview{position:fixed;inset:0;z-index:20;background:rgba(43,51,44,.35);display:grid;place-items:center;padding:16px}
+.textview .card{max-width:760px;width:100%;max-height:100%;overflow:auto;padding:22px}
+.textview section{padding-top:14px;margin-top:14px;border-top:1px solid var(--line);display:grid;gap:8px}
+.find{background:var(--green);color:#fff;border-color:var(--green)}
+.findcard{max-width:620px!important;display:grid;gap:12px}
+.fhead{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.fhead .kick{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.fhead h2{font-size:1.5rem}
+.fopt{display:grid;gap:8px;padding:14px;border-radius:14px;background:#EFF0E9}
+.fopt h3{font-size:1rem}
+.fopt .go{justify-self:start;text-decoration:none}
+.fopt.il{background:#F1E8E1}
+.phone{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.phone span{font-size:1.3rem;font-weight:700;letter-spacing:.02em;user-select:all}
+@media (max-width:760px){.find{order:-1}.top-r{left:auto}}
+@media (max-width:420px){#bText{display:none}.brand>div{display:none}.brand{padding:8px}}
+.wcard{max-width:560px!important;display:grid;gap:12px}
+.wcard .kick{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.wcard h2{font-size:1.45rem}
+.wlead{color:var(--muted)}
+.wsteps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:w}
+.wsteps li{counter-increment:w;display:grid;grid-template-columns:34px 1fr;gap:4px 12px;padding:12px 14px;border-radius:14px;background:#EFF0E9}
+.wsteps li::before{content:counter(w);grid-row:span 2;width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:700}
+.wsteps b{font-weight:600}
+.wsteps span{font-size:.9rem;color:var(--muted)}
+.chip{font-style:normal;font-size:.8rem;border:1px solid var(--line);background:#fff;border-radius:8px;padding:1px 7px;color:var(--ink);white-space:nowrap}
+.wbtns{display:flex;flex-wrap:wrap;gap:10px}
+.wbtns .go{font-size:1rem;padding:12px 20px}
+.linkish{all:unset;cursor:pointer;color:#596F60;font-weight:600;text-decoration:underline}
+.linkish:focus-visible{outline:3px solid var(--c3)}
+.toast{position:fixed;z-index:12;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 32px);background:var(--ink);color:#fff;border-radius:14px;padding:12px 18px;font-size:.92rem;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.lab.start-here{animation:none}
+@media (prefers-reduced-motion:no-preference){.lab.start-here{animation:pulse 1.6s ease-in-out infinite}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(79,138,74,.55)}50%{box-shadow:0 0 0 10px rgba(79,138,74,0)}}
+.lab.start-here{border-color:var(--green)}
+.helpbox{top:calc(76px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));width:280px;padding:14px 16px;font-size:.86rem;display:grid;gap:6px}
+.say{position:fixed;z-index:6;transform:translate(-50%,-100%);max-width:260px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 12px;font-size:.86rem;box-shadow:0 8px 20px rgba(80,90,60,.15);pointer-events:none}
+.say::after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:#fff;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+@keyframes shake{0%,100%{transform:translateX(-50%) rotate(0)}25%{transform:translateX(-50%) rotate(-1deg)}75%{transform:translateX(-50%) rotate(1deg)}}
+/* tour caption */
+.caption{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));width:min(600px,calc(100% - 32px));padding:14px 18px;display:grid;gap:6px}
+.caption .stop{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.caption h3{font-size:1.25rem}
+.caption p{font-size:.92rem}
+.caption .bar{height:4px;background:#eef0e4;border-radius:999px;overflow:hidden}
+.caption .bar i{display:block;height:100%;width:0;background:var(--green)}
+.caption .ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.caption .ctl button{font-weight:500;font-size:.86rem;padding:7px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.caption .ctl button.main{background:var(--green);color:#fff;border-color:var(--green)}
+body.touring .cta,body.touring .hint,body.touring .bot-r,body.touring @media (max-width:1100px){.hint{display:none}}
+@media (max-width:900px){.hero{display:none}}
+@media (max-width:760px){
+  .brand{padding:8px 12px 8px 8px}.brand i{width:36px;height:36px}.brand b{font-size:1rem}
+  .brand small{display:none}
+  .explorer{display:none}
+  .top-r .pill{padding:7px 11px;font-size:.8rem}
+  .cta{width:auto;right:max(16px,env(safe-area-inset-right,0px));padding:13px 18px}
+  .bot-r{bottom:calc(78px + env(safe-area-inset-bottom,0px));left:max(16px,env(safe-area-inset-left,0px));right:auto;flex-wrap:wrap}
+  .panel{top:auto;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));width:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));max-height:52%}
+  body.open .bot-r{display:none}
+  .lab{padding:3px 8px 4px}.lab b{font-size:.78rem}.lab small{display:none}
+}
+@media (min-width:761px){body.open </style>
+
+<div id="stage"></div>
+
+<div class="ui card brand">
+  <i><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.9L22 12l-7.4 3.1L12 22l-2.6-6.9L2 12l7.4-3.1z" fill="#fff"/></svg></i>
+  <div><b>CRC Screening Island</b><small>Colorectal cancer screening</small></div>
+</div>
+<div class="ui card hero" id="hero">
+  <button class="heroX" id="heroX" type="button" aria-label="Hide intro">✕</button>
+  <span class="eyebrow">FLOATING ISLANDS · ONE POLICY</span>
+  <h1>Explore colorectal cancer screening, one island at a time.</h1>
+  <p>Learn why screening matters, how programs help people get screened, and how we know they work. Tap an island to explore.</p>
+  <div class="tags"><span>Explore at your own pace</span><span>Example screening program</span><span>Sources included</span></div>
+</div>
+<div class="ui top-r">
+  <button class="pill" id="bHelp" type="button" aria-expanded="false" aria-label="How to explore">?</button>
+  <button class="pill find" id="bFind" type="button">Find screening near you</button>
+  <button class="pill" id="bText" type="button">Text view</button>
+</div>
+<div class="ui card helpbox" id="help" hidden><b>How to explore</b><span>Drag to rotate. Scroll or pinch to zoom. Tap an island or its label to open it. Tap a person to hear what they say, or tap a building or sign to learn what it stands for.</span></div>
+
+<div class="ui card explorer">
+  <div class="row"><b>Island passport</b><span class="pill sm" id="pcount">0 / 6</span></div>
+  <p>Visit every island to collect its stamp.</p>
+  <div class="badges" id="badges"></div>
+</div>
+<button class="ui cta" id="bTour" type="button"><span>Take the guided tour</span><span aria-hidden="true">↗</span></button>
+<div class="hint">Drag to rotate · Scroll or pinch to zoom · Tap an island</div>
+
+<div class="ui bot-r">
+  <button class="pill" id="bHome" type="button">⌂ Overview</button>
+  <button class="pill" id="bMotion" type="button" aria-pressed="false">Less motion</button>
+</div>
+
+<div class="ui card caption" id="caption" hidden role="region" aria-label="Guided tour">
+  <span class="stop" id="capStop"></span>
+  <h3 id="capName"></h3>
+  <p id="capLine"></p>
+  <div class="bar"><i id="capBar"></i></div>
+  <div class="ctl">
+    <button type="button" id="cPrev">‹ Previous</button>
+    <button type="button" id="cPause" class="main">Pause</button>
+    <button type="button" id="cNext">Next ›</button>
+    <button type="button" id="cOpen">Read more</button>
+    <button type="button" id="cClose">✕ Close</button>
+  </div>
+</div>
+
+<div class="ui card panel" id="panel" hidden></div>
+<div id="labels"></div>
+<div class="textview" id="welcome" hidden>
+ <div class="card wcard" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+  <span class="kick">Welcome</span>
+  <h2 id="wTitle">Welcome to CRC Screening Island!</h2>
+  <p class="wlead">Explore six floating islands to learn why colorectal cancer screening matters, how screening programs help, and what you can do. Here's how to get started.</p>
+  <ol class="wsteps">
+   <li><b>Take the 1-minute guided tour.</b><span>We'll fly you to all six islands, one at a time, with a short caption at each stop.</span></li>
+   <li><b>Then explore on your own.</b><span>Tap any island name, like <i class="chip">01 / Why Screening Matters</i>, to learn more. You can also tap people and buildings.</span></li>
+  </ol>
+  <div class="wbtns"><button class="go" id="wTour" type="button">Start the guided tour</button><button class="pill" id="wSkip" type="button">Explore on my own</button></div>
+  <p class="cite">Looking for a place to get screened? <button class="linkish" id="wFind" type="button">Find screening near you</button></p>
+ </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<div class="say" id="say" role="status" hidden></div>
+<div class="textview" id="textview" hidden></div>
+<div class="textview" id="finder" hidden>
+ <div class="card findcard" role="dialog" aria-modal="true" aria-labelledby="fTitle">
+  <div class="fhead"><div><span class="kick">Illinois · ages 45 to 75</span><h2 id="fTitle">Find screening near you</h2></div><button class="pill" id="fClose" type="button">Close</button></div>
+  <div class="fopt">
+   <h3>1. Community health centers</h3>
+   <p>Federally funded health centers give care whether or not you have health insurance, and fees are on a sliding scale based on what you can pay. Ask about an at-home test kit or a colonoscopy referral.</p>
+   <a class="go" href="https://findahealthcenter.hrsa.gov/" target="_blank" rel="noopener">Search by ZIP code (HRSA) ↗</a>
+  </div>
+  <div class="fopt">
+   <h3>2. Talk to someone, any time</h3>
+   <p>The American Cancer Society helpline is open 24 hours a day, 7 days a week. They can help with questions about screening and cost.</p>
+   <div class="phone"><span id="acsNum">1-800-227-2345</span><button class="pill sm" id="copyNum" type="button">Copy number</button></div>
+  </div>
+  <div class="fopt">
+   <h3>3. Already have a doctor?</h3>
+   <p>Ask at your next visit: "Am I due for colorectal cancer screening? Is an at-home test right for me?"</p>
+  </div>
+  <div class="fopt il">
+   <h3>Illinois is already trying this</h3>
+   <p>The Illinois Department of Public Health funds statewide colorectal cancer outreach that includes community-based navigation. The 2026 to 2027 award went to the Illinois Public Health Association. The goal: 73.4% of adults 45 to 75 screened by 2027, on the way to the Healthy People 2030 target of 74.4%.</p>
+   <p class="cite">Source: <a href="https://omb.illinois.gov/public/gata/csfa/Program.aspx?csfa=2942" target="_blank" rel="noopener">IDPH Colorectal Cancer Screening program (CSFA 482-00-2942)</a></p>
+  </div>
+  <p class="cite">We don't list individual clinics here, because locations and hours change. The HRSA locator is kept up to date. Sources: <a href="https://hrsa.gov/get-health-care" target="_blank" rel="noopener">HRSA: Get health care</a> · <a href="https://www.cancer.org/cancer/colon-rectal-cancer/detection-diagnosis-staging/detection.html" target="_blank" rel="noopener">American Cancer Society</a></p>
+ </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const CSS=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SRC={
+  acs:`American Cancer Society. <a href="https://www.cancer.org/content/dam/cancer-org/research/cancer-facts-and-statistics/colorectal-cancer-facts-and-figures/crc-2026/crc-2026-fast-facts.pdf" target="_blank" rel="noopener">Colorectal Cancer Facts &amp; Figures 2026</a>.`,
+  brfss:`Coleman King S, et al. <a href="https://www.cdc.gov/pcd/issues/2025/25_0175.htm" target="_blank" rel="noopener">CRC screening among adults 45 to 75, BRFSS 2022</a>. <i>Prev Chronic Dis</i>. 2025;22:250175.`,
+  cg:`Community Preventive Services Task Force. <a href="https://thecommunityguide.org/findings/cancer-screening-patient-navigation-services-to-increase-colorectal-cancer-screening.html" target="_blank" rel="noopener">Patient Navigation to Increase CRC Screening</a>. The Community Guide.`,
+  stop:`Coronado GD, et al. <a href="https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/2695511" target="_blank" rel="noopener">STOP CRC cluster randomized trial</a>. <i>JAMA Intern Med</i>. 2018;178(9):1174-1181.`
+};
+const ISLES=[
+ {id:"problem",col:"--c1",name:"Why Screening Matters",tag:"Why it matters",
+  intro:"Screening can prevent colorectal cancer or catch it early, but millions of people who are due aren't getting tested.",
+  secs:[["The burden",`<div class="stats"><div><b>158,850</b><span>new U.S. cases expected in 2026</span></div><div><b>55,230</b><span>U.S. deaths expected in 2026</span></div></div><p class="cite">${SRC.acs}</p>`],
+        ["Who's left out",`<p>About 6 in 10 adults ages 45 to 75 are up to date. The gaps are widest for people with the fewest resources.</p><div class="stats"><div><b>29%</b><span>up to date, no health insurance</span></div><div><b>33%</b><span>up to date, no personal doctor</span></div><div><b>52%</b><span>up to date, income under $15,000</span></div><div><b>30%</b><span>up to date, ages 45 to 49</span></div></div><p class="cite">${SRC.brfss}</p>`]]},
+ {id:"program",col:"--c2",name:"Getting Help With Screening",tag:"What we'd do",
+  intro:"The state health department funds and trains patient navigators. Community health centers serving low-income adults hire them. A navigator is a real person who walks each patient through screening.",
+  secs:[["What a navigator does",`<ul><li><b>Reach out</b> to patients 45 to 75 who are due, in their own language.</li><li><b>Pick a test:</b> mail a free at-home kit or book a colonoscopy.</li><li><b>Clear barriers</b> like rides, time off, prep, and cost questions.</li><li><b>Follow up</b> so an abnormal home test leads to a colonoscopy.</li></ul>`]]},
+ {id:"impact",col:"--c3",name:"How Screening Makes a Difference",tag:"What changes",
+  intro:"We expect three changes, in order: more people screened, more abnormal results followed up, and cancers found earlier.",
+  secs:[["More people screened",`<div class="stats"><div><b>+13.6</b><span>percentage points, median of 26 studies</span></div><div><b>+680</b><span>more screened at a clinic with 5,000 eligible patients</span></div></div><p class="cite">The +680 is simple arithmetic (5,000 × 13.6%), an illustration and not a forecast. ${SRC.cg}</p>`],
+        ["Follow-up that finishes",`<p>In a trial at community health clinics, only 59% of people with an abnormal home test got a colonoscopy within a year. Navigators are meant to close that gap.</p><p class="cite">${SRC.stop}</p>`],
+        ["Found earlier",`<p>The long-term goal is fewer cancers found late. We don't put a number on it, because none of our sources support one for this program.</p>`]]},
+ {id:"proof",col:"--c4",name:"How We Know It Works",tag:"How we'll know",
+  intro:"The evaluation compares health centers that get navigators with similar centers that don't, before and after the program starts.",
+  secs:[["The question",`<p>Do health centers with navigators raise screening more than similar centers without them? We measure the percent of patients 45 to 75 up to date, and how many abnormal home tests get a colonoscopy.</p>`],
+        ["Data and timeline",`<p>Screening numbers community health centers already report to HRSA, plus Illinois BRFSS survey data. We look at two years before the program and two years after.</p>`],
+        ["The comparison",`<p>We see how much screening changed at navigator centers and at comparison centers over the same years. If navigator centers improved more, that extra gain is the program's effect. Researchers call this difference-in-differences.</p>`]]},
+ {id:"action",col:"--c5",name:"Your Next Steps",tag:"What you can do",
+  intro:"Two asks: one for the people the program serves, one for the people who fund it.",
+  secs:[["If you're 45 or older",`<p>Ask your clinic about colorectal cancer screening, including the free at-home test. If cost, rides, or time are in the way, say so. That's what a navigator is for.</p>`],
+        ["Find screening near you",`<p>Look up a community health center by ZIP code, or call the American Cancer Society helpline any time at <b>1-800-227-2345</b>.</p><button class="go" type="button" data-find>Open the screening finder</button>`],
+        ["Illinois is already trying this",`<p>The Illinois Department of Public Health funds statewide colorectal cancer outreach with community-based navigation. The 2026 to 2027 award went to the Illinois Public Health Association, with a goal of 73.4% of adults 45 to 75 screened by 2027.</p><p class="cite">Source: <a href="https://omb.illinois.gov/public/gata/csfa/Program.aspx?csfa=2942" target="_blank" rel="noopener">IDPH Colorectal Cancer Screening program</a></p>`],
+        ["If you make policy",`<p>Fund patient navigators at community health centers, and fund the two-year evaluation with them, so Illinois knows exactly what the money bought.</p>`]]},
+ {id:"made",col:"--c6",name:"How This Program Comes Together",tag:"How it was made",
+  intro:"Explore how this example screening program and educational experience were created, including the role of AI and human review.",
+  secs:[["Who did what",`<p><b>AI:</b> the 3D islands, bridges, walking residents, camera, and first drafts of the text.</p><p><b>A person:</b> chose the policy and audience, checked every number against its source, and cut claims no source supported, like "lives saved."</p>`],
+        ["Make your own",`<p>Your Part 4 can look completely different: a video, a chatbot, a choose-your-path story. Start from your own Parts 1 to 3. A prompt you could adapt:</p><div class="prompt">Build an interactive 3D web page with Three.js: low-poly floating islands joined to a central hub by rope bridges. Each island is one part of my plan for [audience]: the problem, the policy, expected impact, my evaluation, and a call to action. Clicking an island flies the camera there and opens a card. Use only these numbers and sources: [paste]. Plain language.</div>`],
+        ["Design inspiration",`<p class="cite">The floating-island design was inspired by a storybook-style educational experience. CRC Screening Island was developed by Dr. Brian Chen with AI assistance and refined through iterative design to communicate colorectal cancer screening information to the general public.</p>`]]}
+];
+const CONN=[
+ ["problem","program","Barriers","The biggest gaps are among people without insurance or a regular doctor, which are exactly the barriers navigators work on."],
+ ["program","impact","Evidence","Across 26 studies, patient navigation raised screening by a median of 13.6 percentage points."],
+ ["impact","proof","Test it","Expected isn't proven. The evaluation checks that the gain happened here."],
+ ["proof","action","Decide","Results tell lawmakers whether to keep and expand funding."],
+ ["action","problem","Close the gap","Every person screened shrinks the gaps on Problem Island."]
+];
+const LINE=[
+ "Only about 6 in 10 adults ages 45 to 75 are up to date on colorectal cancer screening.",
+ "Trained navigators walk each patient through screening, from the first call to follow-up.",
+ "Across 26 studies, navigation raised screening by a median of 13.6 percentage points.",
+ "We compare navigator clinics with similar clinics, two years before and two years after.",
+ "Adults 45+: ask about the free at-home test. Lawmakers: fund navigators and the evaluation.",
+ "Built with AI, then a person checked every number against its source."
+];
+
+/* ---------- renderer ---------- */
+let calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PHONE=innerWidth<760;
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(PHONE?1.4:1.8,devicePixelRatio||1));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+$("#stage").appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color("#D1DCC9");scene.fog=new THREE.Fog(scene.background.clone(),120,240);
+const camera=new THREE.PerspectiveCamera(36,1,0.1,500);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.08;controls.minDistance=14;controls.maxDistance=100;
+controls.maxPolarAngle=Math.PI*.46;controls.minPolarAngle=Math.PI*.1;controls.enablePan=false;controls.autoRotateSpeed=.3;
+const amb=new THREE.AmbientLight(0xf1eadb,.16);scene.add(amb);
+const hemi=new THREE.HemisphereLight(0xF0F0DE,0x788B71,.43);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xF3E7D4,.55);sun.position.set(30,55,25);sun.castShadow=true;
+sun.shadow.mapSize.set(PHONE?1024:2048,PHONE?1024:2048);Object.assign(sun.shadow.camera,{left:-36,right:36,top:36,bottom:-36,near:1,far:150});sun.shadow.bias=-.0008;scene.add(sun);
+const spot=new THREE.SpotLight(0xffeedb,.08,0,.5,1,0);spot.position.set(0,70,12);spot.target.position.set(0,-2,0);scene.add(spot);scene.add(spot.target);
+
+const M={};const mat=c=>M[c]||(M[c]=new THREE.MeshStandardMaterial({color:c,flatShading:true,roughness:.95}));
+const FOL=["#547C52","#719568","#5E8661","#9AB58A"].map(color=>new THREE.MeshStandardMaterial({color,flatShading:true,roughness:.95}));
+const ACC=new THREE.MeshStandardMaterial({color:"#CFAFA3",flatShading:true,roughness:.95});
+const GRASS=new THREE.MeshStandardMaterial({color:"#A0B394",flatShading:true,roughness:1});
+// Muted, individual island lawn colors: the scene itself, not only the interface.
+const MORANDI_LAWNS=["#B6C98E","#B5C891","#B7CA90","#B4C78C","#B9CB96","#B3C68C"].map(color=>new THREE.MeshStandardMaterial({color,flatShading:true,roughness:1}));
+const MORANDI_SOILS=["#817D68","#89816D","#827C69","#847E6D","#898370","#827F6C"].map(color=>mat(color));
+const GLOW=new THREE.MeshStandardMaterial({color:"#F2E9CC",emissive:"#000000",flatShading:true});
+let seed=7;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+function mesh(geo,m,{x=0,y=0,z=0,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1}={},parent,shadow=true){
+  const o=new THREE.Mesh(geo,typeof m==="string"?mat(m):m);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.scale.set(sx,sy,sz);
+  o.castShadow=shadow;o.receiveShadow=true;(parent||scene).add(o);return o;}
+const G={cyl:(a,b,h,s=8)=>new THREE.CylinderGeometry(a,b,h,s),cone:(r,h,s=7)=>new THREE.ConeGeometry(r,h,s),ico:(r,d=0)=>new THREE.IcosahedronGeometry(r,d),box:(w,h,d)=>new THREE.BoxGeometry(w,h,d),dod:r=>new THREE.DodecahedronGeometry(r,0)};
+const PAL={wood:"#A98C6A",trunk:"#806A54",wall:"#E9E1C8",roofs:["#CA9D7B","#CBBA85","#8EADA4","#B6A4AE"],stone:"#D7D1BA",dirt:"#998575",rock:"#867F79",rock2:"#736D68",hang:"#625C55"};
+
+/* ---------- props (trees are groups so they can sway in the wind) ---------- */
+const trees=[];
+function treeGroup(p,x,z){const g=new THREE.Group();g.position.set(x,0,z);p.add(g);g.userData.ph=rnd()*6;trees.push(g);return g}
+function oak(p,x,z,s=1){const g=treeGroup(p,x,z);mesh(G.cyl(.1*s,.15*s,.8*s,5),PAL.trunk,{y:.4*s},g);const k=Math.floor(rnd()*FOL.length);
+  mesh(G.ico(.8*s,0),rnd()<.22?ACC:FOL[k],{y:1.35*s,ry:rnd()*3},g);mesh(G.ico(.55*s,0),FOL[(k+1)%FOL.length],{x:.35*s,y:1.7*s,z:-.2*s,ry:rnd()*3},g)}
+function pine(p,x,z,s=1){const g=treeGroup(p,x,z);mesh(G.cyl(.1*s,.14*s,.5*s,5),PAL.trunk,{y:.25*s},g);mesh(G.cone(.7*s,1.3*s,6),FOL[1],{y:1.05*s},g);mesh(G.cone(.5*s,1*s,6),FOL[0],{y:1.6*s},g)}
+function bush(p,x,z,s=1){const g=treeGroup(p,x,z);mesh(G.ico(.35*s,0),rnd()<.3?ACC:FOL[2],{y:.25*s,ry:rnd()*3},g)}
+const SKIN=["#f3cfae","#e2b08a","#c98d64","#9a6644"],HAIR=["#5a3a28","#2f2622","#8a5a32","#c48a4a","#1f1b1a"],SHIRT=["#CFAFA3","#A9C0B7","#D5C49D","#B9ADBD","#ffffff","#A8B89C","#CBAA99"],PACK=["#6d9b5a","#4f8f86","#C7A57F","#A89AB5"],HAT=["#e8c27a","#f1d39a","#d9a865"];
+const pick=a=>a[Math.floor(rnd()*a.length)];
+/* realistic-proportion people: smooth shading, jointed limbs, real faces */
+const SMAT={};const smat=c=>SMAT[c]||(SMAT[c]=new THREE.MeshStandardMaterial({color:c,roughness:.82,metalness:0}));
+const GEO={};const geo=(k,f)=>GEO[k]||(GEO[k]=f());
+const gSph=(r,ws=14,hs=10)=>geo("s"+r+ws,()=>new THREE.SphereGeometry(r,ws,hs));
+const gCyl=(a,b,h,s=12)=>geo(`c${a}_${b}_${h}_${s}`,()=>new THREE.CylinderGeometry(a,b,h,s));
+function part(geom,color,{x=0,y=0,z=0,rx=0,ry=0,rz=0,sx=1,sy=1,sz=1}={},parent,shadow=true){const m=new THREE.Mesh(geom,smat(color));m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.scale.set(sx,sy,sz);m.castShadow=shadow;m.receiveShadow=false;parent.add(m);return m}
+const gIco=(r,d)=>gSph(r,18,14);
+function chibi(shirt,role){
+  const g=new THREE.Group(),body=new THREE.Group();g.add(body);
+  const r=rnd(),older=role!=="worker"&&r<.45,skin=pick(SKIN);
+  const hair=older?pick(["#bdbbb5","#d9d6cf","#8f8a84","#efece6","#5a3a28"]):pick(HAIR);
+  const wide=.9+rnd()*.38,tall=.92+rnd()*.16;body.scale.set(wide,tall,wide*.95);
+  const legC=pick(["#6f7fa8","#8a6d55","#4f5d73","#a37b5c","#3f4a5c","#c9b79c"]);
+  const top=role==="worker"?"#99B9AD":shirt||pick(["#CFAFA3","#A9C0B7","#D5C49D","#B9ADBD","#ffffff","#A8B89C","#CBAA99","#9EB8BD","#BE998E","#8fae8b","#e9dfc9"]);
+  const legs=[-1,1].map(s=>{const pv=new THREE.Group();pv.position.set(s*.075,.3,0);body.add(pv);part(G.box(.1,.28,.11),role==="worker"?"#99B9AD":legC,{y:-.15},pv);part(G.box(.12,.07,.16),pick(["#5a4a3f","#2f2a28","#ffffff","#8a6d55"]),{y:-.29,z:.02},pv);return pv});
+  const dress=!role&&rnd()<.22;
+  part(dress?G.cyl(.14,.26,.42,8):G.cyl(.15,.2,.36,8),top,{y:dress?.44:.47},body);
+  if(role==="worker"){part(G.box(.07,.09,.02),"#ffffff",{x:.08,y:.55,z:.17},body,false)}
+  if(!role&&rnd()<.25)part(G.box(.32,.3,.05),pick(["#8a6d55","#4f5d73","#a9b8a0"]),{y:.5,z:.16,sy:1},body); // open jacket front panel
+  const arms=[-1,1].map(s=>{const pv=new THREE.Group();pv.position.set(s*.2,.6,0);body.add(pv);part(G.box(.08,.26,.08),skin,{y:-.12},pv);return pv});
+  const head=new THREE.Group();head.position.y=.9;body.add(head);
+  part(gIco(.25,1),skin,{},head);
+  // headwear (rare) or hair style
+  const hw=rnd();let covered=false;
+  if(hw<.06){const c=pick(["#99B2C0","#B9ADBD","#2f4f6f","#BE998E","#8fae8b"]);part(gIco(.29,1),c,{y:.02,z:-.02,sy:1.05},head);part(G.cyl(.2,.3,.25,10),c,{y:-.25,z:-.03},head);covered=true} // hijab
+  else if(hw<.14){const c=pick(["#e8c27a","#f1d39a"]);part(G.cyl(.38,.38,.03,12),c,{y:.19},head);part(G.cyl(.2,.23,.16,10),c,{y:.27},head);part(G.cyl(.235,.235,.04,10),"#b8875a",{y:.21},head,false)} // sun hat
+  else if(hw<.24){const c=pick(["#B67F77","#2f4f6f","#4f8f86","#2a2420"]);part(gIco(.265,1),c,{y:.09,sy:.62},head);part(G.box(.3,.03,.22),c,{y:.08,z:.24},head)} // cap
+  else if(hw<.29){const c=pick(["#C7A57F","#A89AB5","#B67F77"]);part(gIco(.27,1),c,{y:.1,sy:.75},head);part(gIco(.06,0),"#ffffff",{y:.32},head)} // beanie
+  if(!covered){
+    const st=rnd();
+    if(older&&st<.18){part(gIco(.26,1),hair,{y:-.02,z:-.08,sy:.6,sz:.7},head)} // balding, hair at the back
+    else if(st<.42)part(gIco(.26,1),hair,{y:.07,z:-.04,sy:.72},head); // short
+    else if(st<.58){part(gIco(.26,1),hair,{y:.07,z:-.04,sy:.72},head);part(G.box(.42,.38,.14),hair,{y:-.12,z:-.15},head)} // long
+    else if(st<.72){part(gIco(.26,1),hair,{y:.07,z:-.04,sy:.72},head);part(gIco(.11,0),hair,{y:.27,z:-.08},head)} // bun
+    else if(st<.86)part(gIco(.34,1),hair,{y:.08,z:-.05,sy:.85},head); // curly / afro
+    else{part(gIco(.26,1),hair,{y:.07,z:-.04,sy:.72},head);[-1,1].forEach(s=>part(gIco(.08,0),hair,{x:s*.24,y:-.06,z:-.06},head))} // side puffs
+    if(!older&&rnd()<.12)part(gIco(.12,0),hair,{y:-.12,z:.2,sy:.6},head); // beard
+  }
+  [-1,1].forEach(s=>{part(gIco(.038,0),"#2a2420",{x:s*.085,y:-.01,z:.225},head,false);part(gIco(.04,0),"#f2a0a0",{x:s*.15,y:-.08,z:.19},head,false)});
+  if(rnd()<(older?.55:.2)){const gm=smat("#2a2420");[-1,1].forEach(s=>{const rr=new THREE.Mesh(new THREE.TorusGeometry(.065,.013,4,10),gm);rr.position.set(s*.085,-.01,.235);head.add(rr)});part(G.box(.05,.015,.015),"#2a2420",{y:-.01,z:.24},head,false)}
+  if(!role&&rnd()<.15){const pc=pick(PACK);part(G.box(.26,.3,.14),pc,{y:.5,z:-.2},body)}
+  else if(!role&&rnd()<.2)part(G.box(.18,.2,.06),pick(["#8a6d55","#BE998E","#2f2a28"]),{x:.22,y:.38,z:.02},body); // tote bag
+  if(older&&rnd()<.22){part(G.cyl(.02,.02,.62,5),"#6b4f3a",{x:.27,y:.31,z:.08},g);part(G.box(.12,.03,.03),"#6b4f3a",{x:.24,y:.62,z:.08},g)} // cane
+  g.scale.setScalar(1.18);g.userData={legs,arms,body,ph:rnd()*6};return g;
+}
+function person(p,x,z,col,role){const g=chibi(role?null:col,role);g.position.set(x,0,z);g.rotation.y=rnd()*1.2-.6;p.add(g);g.userData.stand=true;people.push(g);return g}
+const people=[];
+function house(p,x,z,roof,ry=0,s=1){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;g.scale.setScalar(s);
+  mesh(G.box(1.3,.95,1.1),PAL.wall,{y:.48},g);
+  mesh(G.cone(1.07,.85,4),roof,{y:1.39,ry:Math.PI/4,sz:.95},g);
+  mesh(G.box(.28,.45,.055),PAL.wood,{y:.23,z:.56},g);
+  mesh(G.box(.3,.26,.06),"#785d43",{x:.38,y:.6,z:.57},g);
+  mesh(G.box(.23,.18,.07),"#B7CFCC",{x:.38,y:.6,z:.61},g,false);
+  mesh(G.box(.035,.23,.08),"#F4EDE1",{x:.38,y:.6,z:.65},g,false);
+  mesh(G.box(.26,.035,.08),"#F4EDE1",{x:.38,y:.6,z:.65},g,false);
+  mesh(G.box(.18,.52,.18),"#c8a58a",{x:-.35,y:1.45,z:-.19},g);
+  mesh(G.box(1.42,.08,1.24),"#E8D9C5",{y:.92},g);
+  mesh(G.cyl(.26,.33,.15,8),"#e3c29e",{x:.65,y:.075,z:.6},g);
+  // Warm timber trim, window box and stepping-stone entry.
+  mesh(G.box(1.38,.07,1.17),"#D9CAB6",{y:.92},g);
+  mesh(G.box(.43,.08,.13),"#AD987E",{x:.38,y:.43,z:.64},g,false);
+  [-.12,0,.12].forEach(dx=>mesh(G.ico(.075,0),"#A5B69F",{x:.38+dx,y:.50,z:.65},g,false));
+  mesh(G.cyl(.29,.32,.055,9),"#D9D0C0",{y:.03,z:.85},g,false);
+  // Miniature handcrafted facade: gable fascia, shutters, flower window-box and doorstep.
+  mesh(G.box(.62,.055,.10),"#F2E8D2",{x:.30,y:1.77,z:.55,rz:-.58},g,false);
+  mesh(G.box(.62,.055,.10),"#F2E8D2",{x:-.30,y:1.77,z:.55,rz:.58},g,false);
+  [-.29,.29].forEach(dx=>mesh(G.box(.065,.31,.07),"#A5A98B",{x:.38+dx,y:.59,z:.65},g,false));
+  mesh(G.box(.52,.085,.20),"#BDA784",{x:.38,y:.43,z:.66},g,false);
+  for(let j=0;j<4;j++)mesh(G.ico(.065,0),["#C8AB92","#D9C98C","#C5A4A0","#E9DDCA"][j],{x:.18+j*.13,y:.53,z:.7},g,false);
+  mesh(G.box(.45,.06,.32),"#DCC7A5",{y:.035,z:.73},g,false);
+  p.add(g);return g}
+function lamp(p,x,z){mesh(G.cyl(.04,.05,1.2,5),"#8a7a6a",{x,y:.6,z},p);mesh(G.ico(.13,0),GLOW,{x,y:1.25,z},p,false)}
+function flag(p,x,z,col){mesh(G.cyl(.04,.04,1.5,5),"#9a8270",{x,y:.75,z},p);mesh(G.box(.6,.34,.03),col,{x:x+.32,y:1.3,z},p)}
+function fence(p,r,a0,a1){const n=Math.round((a1-a0)*r/0.45);for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;mesh(G.box(.07,.4,.07),"#F3EEE6",{x:Math.cos(a)*r,y:.2,z:Math.sin(a)*r},p)}
+  for(let i=0;i<n;i++){const a=a0+(a1-a0)*(i+.5)/n;mesh(G.box(.42,.06,.05),"#F3EEE6",{x:Math.cos(a)*r,y:.3,z:Math.sin(a)*r,ry:-a+Math.PI/2},p)}}
+function stones(p,r,a0,a1){const n=Math.round((a1-a0)*r/0.5);for(let i=0;i<n;i++){const a=a0+(a1-a0)*i/n;mesh(G.cyl(.22,.22,.05,6),PAL.stone,{x:Math.cos(a)*r,y:.03,z:Math.sin(a)*r,ry:rnd()},p,false)}}
+function flowers(p,x,z){for(let i=0;i<7;i++)mesh(G.ico(.12,0),["#CFAFA3","#F2E9CC","#B9ADBD"][i%3],{x:x+(rnd()-.5)*1.2,y:.12,z:z+(rnd()-.5)*.8},p,false)}
+
+/* Morandi storybook details: modest-scale garden beds, handmade signposts and capped mushrooms. */
+const STORY_FLOWER_COLORS=["#CFAFA3","#E9DEC7","#B9ADBD","#C8B997"];
+const storyPetal=G.ico(.085,0),storyCenter=G.ico(.063,0),storyStem=G.cyl(.014,.019,.23,5);
+function storyFlower(p,x,z,s=1){
+  const gg=new THREE.Group();gg.position.set(x,.03,z);gg.scale.setScalar(s);p.add(gg);
+  mesh(storyStem,"#788E75",{y:.115},gg,false);
+  const color=STORY_FLOWER_COLORS[Math.floor(rnd()*STORY_FLOWER_COLORS.length)];
+  for(let j=0;j<5;j++){const a=j*Math.PI*2/5;mesh(storyPetal,color,{x:Math.cos(a)*.105,y:.26,z:Math.sin(a)*.105},gg,false)}
+  mesh(storyCenter,"#D7BD85",{y:.275},gg,false);
+}
+function storyMushroom(p,x,z,s=1){const gg=new THREE.Group();gg.position.set(x,0,z);gg.scale.setScalar(s);p.add(gg);
+ mesh(G.cyl(.045,.065,.19,7),"#EFE5D5",{y:.095},gg,false);
+ mesh(G.cone(.18,.16,9),"#B9958A",{y:.25},gg,false);
+ mesh(G.ico(.037,0),"#EEE4DB",{x:-.04,y:.28,z:.125},gg,false);
+}
+function storyGarden(p,x,z){
+  mesh(G.cyl(.52,.59,.095,10),"#D6C8B2",{x,y:.045,z},p,false);
+  mesh(G.cyl(.44,.44,.105,10),"#A1B297",{x,y:.10,z},p,false);
+  for(let i=0;i<6;i++){const a=i*6.283/6;storyFlower(p,x+Math.cos(a)*.29,z+Math.sin(a)*.29,.7+rnd()*.25)}
+}
+/* Storybook village visual pass: denser foliage, cottages, architectural trim. */
+/* Colored grass is the top cylinder; transparent low-opacity clouds prevent white-out. */
+/* island */
+const ISLE_R=5.2,HUB_R=6,RING=20.5;
+function island(r){
+  const g=new THREE.Group();
+  // True 3D pointed floating mountain: green lawn, olive-brown shoulder,
+  // progressively narrowing earth layers and dark conical tip.
+  // Keep children 0 and 1 as the lawn and shoulder for existing per-island colors.
+  mesh(G.cyl(r,r*.985,.38,14),GRASS,{y:-.19},g);
+  mesh(G.cyl(r*.985,r*.90,.65,12),PAL.dirt,{y:-.705},g);
+  // Broader, shorter inverted-mountain base. The bottom is a small blunt
+  // stone face, NOT a needle-shaped cone. Gentle faceted transitions.
+  const band1=r*.23,band2=r*.25,band3=r*.23,foot=r*.12;
+  let edge=-1.03;
+  mesh(G.cyl(r*.90,r*.79,band1,12),"#807D66",{y:edge-band1/2},g);edge-=band1;
+  mesh(G.cyl(r*.79,r*.59,band2,12),"#676B57",{y:edge-band2/2},g);edge-=band2;
+  mesh(G.cyl(r*.59,r*.34,band3,12),"#525645",{y:edge-band3/2},g);edge-=band3;
+  mesh(G.cyl(r*.34,r*.21,foot,12),"#43483C",{y:edge-foot/2},g);
+  for(let i=0;i<4;i++){const a=rnd()*6.28,rr=r*(.3+rnd()*.5);mesh(G.ico(.22+rnd()*.25,0),PAL.hang,{x:Math.cos(a)*rr,y:-r*1.1-1.5-rnd()*2.4,z:Math.sin(a)*rr},g)}
+  return g;
+}
+function rimTrees(g,r,n,skip=[]){for(let i=0;i<n;i++){const a=rnd()*6.28;if(skip.some(([s0,s1])=>a>s0&&a<s1))continue;const rr=r-.55-rnd()*1.1;const x=Math.cos(a)*rr,z=Math.sin(a)*rr;const t=rnd();t<.55?oak(g,x,z,.7+rnd()*.4):t<.82?pine(g,x,z,.75+rnd()*.35):bush(g,x,z,1+rnd());if(i%6===0){storyGarden(g,x*.83,z*.83)}else if(i%7===0){storyMushroom(g,x*.92,z*.92,.72);storyFlower(g,x*.84,z*.85,.72)}}}
+// Tiny scalloped groundcover beds give the terrain a handmade, storybook finish.
+const GROUND_MATS=["#A2B69E","#CFD2B5","#A8BBAE","#D2C8B6"].map(mat);
+const groundGeo=G.ico(.27,0);
+function groundcover(p,r,count){for(let j=0;j<count;j++){
+ const a=j*Math.PI*2/count+.19,rr=r-(.42+(j%3)*.25),x=Math.cos(a)*rr,z=Math.sin(a)*rr;
+ const m=mesh(groundGeo,GROUND_MATS[j%GROUND_MATS.length],{x,y:.04,z,sx:1.15,sy:.26,sz:.85},p,false);
+ if(j%4===0){storyFlower(p,x+.28,z+.16,.55)}
+}}
+// Tiny storybook landmarks: low-cost repeated geometry, placed outside exhibit paths.
+const STORY_PAVERS=["#D5CCAD","#E2D7C0","#B7C3A0"].map(mat);
+function storybookVillage(p,r,variant){
+  // Gently winding stepping-stone walk, not a solid bright white disk.
+  for(let j=0;j<13;j++){
+    const u=j/12,a=2.38+u*.55,rr=2.85+u*1.12;
+    mesh(G.cyl(.19+(j%3)*.035,.21,.045,7),STORY_PAVERS[j%3],
+      {x:Math.cos(a)*rr,y:.035,z:Math.sin(a)*rr,ry:j*.38},p,false);
+  }
+  // Rounded green hedges and subtle perennial flower borders.
+  for(let j=0;j<12;j++){
+    const a=3.30+j*.16,rr=r-1.05+(j%3)*.065;
+    const x=Math.cos(a)*rr,z=Math.sin(a)*rr;
+    mesh(G.ico(.26,0),FOL[(variant+j)%FOL.length],{x,y:.18,z,sy:.73},p,false);
+    if(j%2===0)storyFlower(p,x*.94,z*.94,.57);
+  }
+  // Two timber park benches on the quiet perimeter.
+  for(let k=0;k<2;k++){
+    const a=(variant*.51+k*1.7)+.25,rr=r-1.75,x=Math.cos(a)*rr,z=Math.sin(a)*rr;
+    const b=new THREE.Group();b.position.set(x,0,z);b.rotation.y=-a;p.add(b);
+    mesh(G.box(.85,.095,.26),"#A88C6D",{y:.32},b,false);
+    mesh(G.box(.85,.33,.075),"#A88C6D",{y:.56,z:-.14},b,false);
+    [-.3,.3].forEach(v=>mesh(G.box(.075,.31,.075),"#807560",{x:v,y:.16},b,false));
+  }
+  // Small lantern flowers provide detail without glare.
+  for(let j=0;j<7;j++){
+    const a=.23+j*.72,rr=r-1.1,x=Math.cos(a)*rr,z=Math.sin(a)*rr;
+    if(j%2===0)storyMushroom(p,x,z,.62);else storyFlower(p,x,z,.85);
+  }
+}
+function waterfall(p,ang,r,h){const x=Math.cos(ang)*r,z=Math.sin(ang)*r;
+  const w=new THREE.Mesh(new THREE.PlaneGeometry(.5,h),new THREE.MeshBasicMaterial({color:0xd8f0f6,transparent:true,opacity:.85,side:THREE.DoubleSide}));
+  w.position.set(x,-h/2-.1,z);w.lookAt(x*2,-h/2,z*2);p.add(w);return w}
+
+/* ---------- hub ---------- */
+const hub=island(HUB_R);hub.children[0].material=mat("#B6C98E");hub.children[1].material=mat("#A99B8A");scene.add(hub);
+mesh(G.cyl(3.4,3.4,.05,28),"#EAE3D7",{y:.02},hub,false);
+mesh(G.cyl(1.05,1.2,.32,12),"#E1D9C9",{y:.16},hub);mesh(G.cyl(.85,.85,.07,12),"#B2C8C9",{y:.34},hub,false);
+mesh(G.cyl(.15,.22,.8,8),"#E1D9C9",{y:.55},hub);mesh(G.ico(.2,1),"#D9E5E1",{y:1.05},hub);
+const tower=new THREE.Group();tower.position.set(-1.7,0,-1.6);hub.add(tower);
+mesh(G.cyl(.8,.9,3.2,10),PAL.wall,{y:1.6},tower);mesh(G.cone(1.1,1.3,10),"#A9C0B7",{y:3.85},tower);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(.55,.09,6,18),mat("#D5C49D"));ring.position.set(0,2.6,.82);tower.add(ring);
+mesh(G.box(.38,.65,.05),PAL.wood,{y:.33,z:.86},tower);
+[[2,-1.4,"#CFAFA3"],[2.5,.5,"#D5C49D"],[.6,2.5,"#B9ADBD"],[-1.4,2.2,"#A9C0B7"],[1.2,-2.6,"#C5CCAF"]].forEach(([x,z,c])=>{const s=new THREE.Group();s.position.set(x,0,z);s.lookAt(0,0,0);hub.add(s);
+  mesh(G.box(1.1,.45,.55),"#D5BBA4",{y:.23},s);[-.5,.5].forEach(dx=>mesh(G.cyl(.035,.035,1,4),PAL.wood,{x:dx,y:.5,z:-.22},s));mesh(G.box(1.3,.07,.85),c,{y:1.02,z:-.05,rx:-.2},s);});
+seed=3;groundcover(hub,HUB_R,23);rimTrees(hub,HUB_R,26);flowers(hub,-2.6,-.6);flowers(hub,2.2,2.8);
+lamp(hub,2.6,2.2);lamp(hub,-2.8,.6);lamp(hub,.2,-3);
+[[1,1.4,"#A4C0C5"],[-.6,1.7,"#CCAFA2"],[1.5,-.3,"#B2C6A3"],[-1.8,.4,"#D5C49D"]].forEach(a=>person(hub,...a));
+
+/* ---------- six islands ---------- */
+/* ---------- topic landmarks: each island's items explain its part of the plan ---------- */
+const ITEMS=[];
+const FONT='"Noto Sans",system-ui,sans-serif';
+const TEXS=[];
+function tex(draw,w,h){const sc=2,c=document.createElement("canvas");c.width=w*sc;c.height=h*sc;const x=c.getContext("2d");const paint=()=>{x.setTransform(sc,0,0,sc,0,0);x.clearRect(0,0,w,h);draw(x,w,h)};paint();
+  const t=new THREE.CanvasTexture(c);t.anisotropy=renderer.capabilities.getMaxAnisotropy();t.generateMipmaps=true;t.minFilter=THREE.LinearMipmapLinearFilter;TEXS.push({t,paint});return t}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>TEXS.forEach(o=>{o.paint();o.t.needsUpdate=true}));
+function board(p,{x,z,y=1,w=1.6,h=.8,ry=0,posts=true,frame="#F3EEE6",draw}){
+  const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;p.add(g);
+  mesh(G.box(w+.1,h+.1,.07),frame,{y},g);
+  const pl=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:tex(draw,512,Math.round(512*h/w))}));pl.position.set(0,y,.04);g.add(pl);
+  if(posts)[-1,1].forEach(s=>mesh(G.cyl(.04,.05,y-h/2,5),"#9a8270",{x:s*(w/2-.08),y:(y-h/2)/2,z:-.02},g));
+  return g}
+function label(text,bg,fg){return(x,w,h)=>{x.fillStyle=bg;x.fillRect(0,0,w,h);x.fillStyle=fg;x.textAlign="center";x.textBaseline="middle";
+  const lines=text.split("\n");const fs=Math.min(h/(lines.length+.6),w/(Math.max(...lines.map(l=>l.length))*.62));x.font=`700 ${fs}px ${FONT}`;
+  lines.forEach((l,i)=>x.fillText(l,w/2,h/2+(i-(lines.length-1)/2)*fs*1.1))}}
+function item(g,name,text){const it={g,name,text};ITEMS.push(it);g.traverse(o=>o.userData.item=it);return g}
+function grp(p,x,z,ry=0){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;p.add(g);return g}
+function building(p,{w,h,d,wall=PAL.wall,roof,trim}){
+  mesh(G.box(w,h,d),wall,{y:h/2},p);
+  mesh(G.box(w+.16,.14,d+.16),roof,{y:h+.07},p);
+  mesh(G.box(w+.20,.075,d+.20),"#F3EDE0",{y:h+.17},p);
+  if(trim)mesh(G.box(w+.02,.1,d+.02),trim,{y:.05},p);
+  [-1,1].forEach(side=>{
+    mesh(G.box(.10,h*.82,.10),"#E5DACC",{x:side*(w/2-.08),y:h*.48,z:d/2+.07},p);
+    mesh(G.box(.12,.12,.12),roof,{x:side*(w/2-.08),y:h*.91,z:d/2+.08},p);
+  });
+}
+function windows(p,w,h,d,rows=1,cols=3){for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)mesh(G.box(.22,.2,.03),GLOW,{x:-w/2+(c+.5)*w/cols,y:h*.38+r*.42,z:d/2+.01},p)}
+function door(p,d,x=0){mesh(G.box(.32,.5,.03),PAL.wood,{x,y:.25,z:d/2+.015},p)}
+function crossSign(p,y,z,s=1,col="#C2918A"){mesh(G.box(.36*s,.12*s,.04),col,{y,z},p);mesh(G.box(.12*s,.36*s,.04),col,{y,z},p)}
+
+const decorate={
+  problem(g,c){
+    // screening-gap billboard, drawn from BRFSS 2022
+    item(board(g,{x:0,z:-1.5,y:1.55,w:2.6,h:1.45,draw:(x,w,h)=>{x.fillStyle="#fffdf6";x.fillRect(0,0,w,h);x.fillStyle="#2b332c";x.font=`700 30px ${FONT}`;x.fillText("Up to date on screening",22,42);
+      const bars=[["All 45-75",61],["Income <$15k",52],["No doctor",33],["No insurance",29]];
+      bars.forEach(([n,v],i)=>{const y=70+i*52;x.fillStyle="#eef0e4";x.fillRect(190,y,290,34);x.fillStyle=i?"#CCAFA2":"#99B9AD";x.fillRect(190,y,290*v/100,34);x.fillStyle="#2b332c";x.font=`600 22px ${FONT}`;x.fillText(n,22,y+25);x.font=`700 22px ${FONT}`;x.fillText(v+"%",196+290*v/100,y+25)})
+      x.fillStyle="#6f786c";x.font=`500 17px ${FONT}`;x.fillText("Source: BRFSS 2022",22,h-14)}}),
+      "Screening gap billboard","Share of adults 45 to 75 up to date on screening: 61% overall, 52% with income under $15,000, 33% with no personal doctor, 29% with no health insurance (BRFSS 2022).");
+    // bus stop with no bus
+    const bus=item(grp(g,1.55,.55,-.5),"Bus stop","No ride to the clinic is one of the everyday barriers that keep people from getting screened.");
+    mesh(G.box(1,.9,.06),"#C9D8D2",{y:.6,z:-.25},bus);mesh(G.box(1.15,.06,.65),"#A9C0B7",{y:1.08},bus);[-1,1].forEach(s=>mesh(G.cyl(.03,.03,1.05,5),"#8a7a6a",{x:s*.52,y:.53,z:.25},bus));
+    mesh(G.box(.85,.07,.28),PAL.wood,{y:.3,z:-.08},bus);mesh(G.cyl(.03,.03,1.4,5),"#8a7a6a",{x:-.75,y:.7,z:.3},bus);
+    board(bus,{x:-.75,z:.3,y:1.35,w:.38,h:.24,posts:false,draw:label("BUS","#4f8f86","#fff")});
+    person(bus,.1,.05,"#CBAA99");
+    // dark-blue awareness ribbon
+    const rib=item(grp(g,-1.6,.45),"Blue ribbon","Dark blue is the colorectal cancer awareness color. March is Colorectal Cancer Awareness Month.");
+    mesh(G.cyl(.35,.4,.18,8),"#E1D9C9",{y:.09},rib);const loop=new THREE.Mesh(new THREE.TorusGeometry(.32,.09,6,16),mat("#2f4fa0"));loop.position.y=1.05;loop.scale.y=1.35;loop.castShadow=true;rib.add(loop);
+    [-1,1].forEach(s=>mesh(G.box(.14,.75,.08),"#2f4fa0",{x:s*.18,y:.48,rz:s*.35},rib));
+    // birthday cake: screening starts at 45
+    const cake=item(grp(g,.1,1.25),"Turning 45","Screening is recommended starting at age 45. Turning 45 is a good reminder to ask about it.");
+    mesh(G.cyl(.32,.34,.24,10),"#EFE1DC",{y:.12},cake);mesh(G.cyl(.22,.24,.2,10),"#ffffff",{y:.34},cake);mesh(G.cyl(.02,.02,.16,4),"#99B9AD",{y:.52},cake);mesh(G.ico(.04,0),GLOW,{y:.62},cake,false);
+    board(cake,{x:0,z:.33,y:.12,w:.34,h:.16,posts:false,frame:"#CFAFA3",draw:label("45","#CFAFA3","#fff")});
+  },
+  program(g,c){
+    const hc=item(grp(g,-.25,-1.2),"Community health center","Navigators work here. Community health centers serve many adults with low incomes, where screening gaps are widest.");
+    building(hc,{w:2.6,h:1.25,d:1.4,roof:c,trim:"#A9C0B7"});windows(hc,2.6,1.25,1.4,1,4);door(hc,1.4,.9);crossSign(hc,1.05,.72,.9);
+    board(hc,{x:-.35,z:.71,y:1.04,w:1.3,h:.26,posts:false,frame:c,draw:label("COMMUNITY HEALTH CENTER","#ffffff","#2b6b62")});
+    const mb=item(grp(g,-1.55,.75,.4),"Mailbox with test kits","Navigators can mail a free at-home stool test (FIT). Patients collect a sample at home and mail it back.");
+    mesh(G.cyl(.05,.05,.7,5),"#8a7a6a",{y:.35},mb);mesh(G.box(.38,.3,.5),"#99B2C0",{y:.8},mb);mesh(G.cyl(.19,.19,.5,10,1),"#99B2C0",{y:.95,rx:Math.PI/2},mb);
+    [[.35,0],[.55,.2],[.45,-.22]].forEach(([dx,dz])=>{mesh(G.box(.26,.16,.2),"#ffffff",{x:dx,y:.08,z:dz},mb);mesh(G.box(.27,.04,.21),c,{x:dx,y:.1,z:dz},mb)});
+    const van=item(grp(g,1.45,.55,-.6),"Shuttle van","Rides to appointments clear one of the biggest barriers to finishing a colonoscopy.");
+    mesh(G.box(1.25,.55,.62),"#ffffff",{y:.42},van);mesh(G.box(.42,.35,.6),"#ffffff",{x:.6,y:.32},van);mesh(G.box(1.26,.1,.63),c,{y:.32},van);
+    mesh(G.box(.3,.22,.02),"#C9D8D2",{x:.62,y:.52,z:.31},van);[[-.38,.32],[.45,.32],[-.38,-.32],[.45,-.32]].forEach(([dx,dz])=>mesh(G.cyl(.13,.13,.08,10),"#4b4540",{x:dx,y:.13,z:dz,rx:Math.PI/2},van));
+    crossSign(van,.5,.32,.6);
+    const k=item(grp(g,.35,.75),"Navigator's desk","Navigators reach out by phone or text, in the patient's own language, and keep following up.");
+    mesh(G.box(.8,.45,.45),"#D5BBA4",{y:.23},k);mesh(G.box(.2,.06,.14),"#4b4540",{x:-.2,y:.48},k);mesh(G.box(.26,.18,.02),"#C9D8D2",{x:.18,y:.56,rx:-.3},k);
+    person(k,.1,-.45,c,"worker");
+  },
+  impact(g,c){
+    const hos=item(grp(g,-.45,-1.15),"Hospital","Where a follow-up colonoscopy happens after an abnormal home test. In the STOP CRC trial, only 59% of people with an abnormal test finished one within a year.");
+    building(hos,{w:2.3,h:2,d:1.4,roof:"#e6eef0",trim:"#A9C0B7"});windows(hos,2.3,2,1.4,3,4);door(hos,1.4);
+    board(hos,{x:0,z:.71,y:1.75,w:1.4,h:.28,posts:false,frame:"#C2918A",draw:label("HOSPITAL","#ffffff","#B67F77")});
+    const pad=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:tex((x,w,h)=>{x.fillStyle="#99B9AD";x.beginPath();x.arc(w/2,h/2,w/2-6,0,7);x.fill();x.fillStyle="#fff";x.font=`800 ${w*.6}px ${FONT}`;x.textAlign="center";x.textBaseline="middle";x.fillText("H",w/2,h/2+8)},256,256),transparent:true}));
+    pad.rotation.x=-Math.PI/2;pad.position.y=2.15;hos.add(pad);
+    const col=item(grp(g,1.55,-.55),"Rising columns","+13.6 percentage points: the median gain in screening from patient navigation across 26 studies (The Community Guide).");
+    [[-.35,.7],[0,1.15],[.35,1.65]].forEach(([dx,h])=>mesh(G.box(.3,h,.3),PAL.wall,{x:dx,y:h/2},col));mesh(G.cone(.24,.4,4),c,{x:.35,y:1.85,ry:Math.PI/4},col);
+    board(col,{x:0,z:.32,y:.18,w:.9,h:.26,posts:false,frame:c,draw:label("+13.6 pts","#fff8e3","#8a6200")});
+    const gard=item(grp(g,.05,1.2),"Blue flower garden","The long-term goal: more cancers found early, when treatment works best.");
+    for(let i=0;i<12;i++){const a=i/12*6.28;mesh(G.cyl(.015,.015,.25,3),"#6aa75b",{x:Math.cos(a)*.5,y:.12,z:Math.sin(a)*.3},gard,false);mesh(G.ico(.09,0),i%3?"#99B2C0":"#9fc1f0",{x:Math.cos(a)*.5,y:.27,z:Math.sin(a)*.3},gard,false)}
+    mesh(G.cyl(.18,.2,.16,8),"#E1D9C9",{y:.08},gard);
+    person(g,.9,.6,"#A4C0C5","worker");
+  },
+  proof(g,c){
+    const mk=(x,name,flagCol,text,title)=>{const cl=item(grp(g,x,-1.1),title,text);building(cl,{w:1.35,h:.95,d:1,roof:flagCol});windows(cl,1.35,.95,1,1,2);door(cl,1);crossSign(cl,.78,.51,.55);
+      mesh(G.cyl(.03,.03,1.3,5),"#9a8270",{x:.55,y:1.6},cl);mesh(G.box(.42,.26,.02),flagCol,{x:.78,y:2.1},cl);
+      board(cl,{x:0,z:.51,y:1.17,w:1.2,h:.22,posts:false,frame:flagCol,draw:label(name,"#ffffff","#2b332c")})};
+    mk(-1.05,"NAVIGATOR CLINIC","#7cc06e","Gets patient navigators. We track how much its screening rate changes.","Navigator clinic");
+    mk(1.05,"COMPARISON CLINIC","#b7bcc4","A similar clinic without navigators. Its change shows what would have happened anyway.","Comparison clinic");
+    item(board(g,{x:0,z:.75,y:.75,w:1.5,h:.85,draw:(x,w,h)=>{x.fillStyle="#fffdf6";x.fillRect(0,0,w,h);x.strokeStyle="#d6dbcd";x.lineWidth=3;x.beginPath();x.moveTo(40,h-40);x.lineTo(w-20,h-40);x.moveTo(40,20);x.lineTo(40,h-40);x.stroke();
+      x.setLineDash([10,10]);x.strokeStyle="#e3a33b";x.beginPath();x.moveTo(w/2,20);x.lineTo(w/2,h-40);x.stroke();x.setLineDash([]);
+      x.lineWidth=8;x.strokeStyle="#9aa0a6";x.beginPath();x.moveTo(50,220);x.lineTo(w/2,200);x.lineTo(w-30,180);x.stroke();
+      x.strokeStyle="#5aa64c";x.beginPath();x.moveTo(50,190);x.lineTo(w/2,170);x.lineTo(w-30,80);x.stroke();
+      x.fillStyle="#6f786c";x.font=`600 20px ${FONT}`;x.fillText("before",90,h-12);x.fillText("after",w-130,h-12);x.fillStyle="#3f8a4c";x.fillText("navigator",w-150,70);x.fillStyle="#6f786c";x.fillText("comparison",w-160,215)}}),
+      "Difference-in-differences board","Compare the change at navigator clinics with the change at comparison clinics. The extra rise is the program's effect. (Illustration, not real data.)");
+    const rec=item(grp(g,-1.6,.8,.5),"Clinic records","Health centers already report screening numbers to HRSA every year, so the data mostly exist.");
+    [0,1].forEach(i=>{mesh(G.box(.45,.75,.4),"#b9c4cf",{x:i*.48,y:.38},rec);[0,1,2].forEach(r=>mesh(G.box(.3,.03,.02),"#6f7d88",{x:i*.48,y:.18+r*.24,z:.21},rec))});
+    item(board(g,{x:1.6,z:.8,y:.62,w:.9,h:.6,ry:-.5,draw:(x,w,h)=>{x.fillStyle="#fff";x.fillRect(0,0,w,h);x.fillStyle="#B7A9BA";x.fillRect(0,0,w,70);x.fillStyle="#fff";x.font=`700 34px ${FONT}`;x.textAlign="center";x.fillText("TIMELINE",w/2,48);
+      x.fillStyle="#2b332c";x.font=`700 40px ${FONT}`;x.fillText("2 yrs before",w/2,150);x.fillText("2 yrs after",w/2,230);x.fillStyle="#e3a33b";x.fillRect(40,175,w-80,6)}}),
+      "Timeline","We look at two years before the program starts and two years after.");
+  },
+  action(g,c){
+    const cap=item(grp(g,-.2,-1.25),"State Capitol","Where lawmakers decide whether to fund navigators and the evaluation.");
+    mesh(G.box(2.6,.95,1.25),PAL.wall,{y:.48},cap);mesh(G.box(2.8,.12,1.4),"#E1D9C9",{y:.06},cap);for(let i=0;i<6;i++)mesh(G.cyl(.07,.07,.85,6),"#EAE3D7",{x:-1+i*.4,y:.5,z:.66},cap);
+    mesh(G.box(1.2,.35,.9),PAL.wall,{y:1.13},cap);const d=new THREE.Mesh(new THREE.SphereGeometry(.55,12,6,0,Math.PI*2,0,Math.PI/2),mat("#EAE3D7"));d.position.y=1.3;d.castShadow=true;cap.add(d);
+    mesh(G.cyl(.04,.04,.45,5),"#8a7a6a",{y:2.05},cap);mesh(G.box(.32,.2,.02),c,{x:.17,y:2.18},cap);
+    board(cap,{x:0,z:.68,y:1.05,w:1.3,h:.22,posts:false,frame:"#D5BBA4",draw:label("STATE CAPITOL","#fffdf6","#5a4a3a")});
+    const pod=item(grp(g,1.3,.65,-.4),"Testimony podium","Share what the evaluation found, so funding decisions follow the evidence.");
+    mesh(G.cyl(.7,.75,.2,10),"#D5BBA4",{y:.1},pod);mesh(G.box(.32,.55,.26),c,{y:.47},pod);mesh(G.cyl(.015,.015,.25,4),"#4b4540",{y:.85,z:.08,rx:-.4},pod);
+    person(pod,0,-.35,"#A4C0C5").position.y=.2;
+    const mail=item(grp(g,-1.5,.75,.4),"Letters to lawmakers","Write to your state representative and ask them to fund patient navigators.");
+    mesh(G.cyl(.05,.05,.6,5),"#8a7a6a",{y:.3},mail);mesh(G.box(.45,.35,.35),"#ef8f88",{y:.75},mail);
+    for(let i=0;i<3;i++)mesh(G.box(.28,.02,.2),"#ffffff",{x:.4,y:.03+i*.03,z:.1,ry:i*.4},mail,false);
+    const post=item(grp(g,1.8,-.45,-.5),"Screening near you","Tap to find a community health center by ZIP code, or call the American Cancer Society helpline.");post.userData.action=()=>openFinder();post.traverse(o=>o.userData.item.action=()=>openFinder());
+    mesh(G.cyl(.05,.06,1.9,6),"#9a8270",{y:.95},post);
+    board(post,{x:.32,z:0,y:1.6,w:.85,h:.26,posts:false,frame:"#647E6B",draw:label("Screening near you →","#647E6B","#ffffff")});
+    board(post,{x:-.3,z:.02,y:1.22,w:.8,h:.24,posts:false,frame:"#D5C49D",draw:label("← Health centers","#fff4d6","#5a3a00")});
+    board(post,{x:.28,z:.04,y:.86,w:.85,h:.24,posts:false,frame:"#CFAFA3",draw:label("Call 1-800-227-2345","#EFE1DC","#7a2f3a")});
+    item(board(g,{x:.05,z:1.15,y:.6,w:1.2,h:.42,draw:label("45 or older?\nAsk about screening","#fff4d6","#5a3a00")}),"Clinic sign","If you're 45 or older, ask your clinic about colorectal cancer screening, including the free at-home test.");
+    [[.7,1.5],[1.05,1.25],[1.75,1.3]].forEach(([x,z],i)=>person(g,x,z,["#CCAFA2","#B2C6A3","#B7A9BA"][i]));
+  },
+  made(g,c){
+    house(g,-1.25,-1,PAL.roofs[3],.4,1.1);
+    const mill=new THREE.Group();mill.position.set(1.35,0,-1.05);g.add(mill);
+    mesh(G.cyl(.42,.65,2.2,8),PAL.wall,{y:1.1},mill);mesh(G.cone(.6,.65,8),"#CFAFA3",{y:2.55},mill);
+    const bl=new THREE.Group();bl.position.set(0,2,.56);mill.add(bl);
+    for(let i=0;i<4;i++){const b=mesh(G.box(.2,1.4,.04),"#ffffff",{},bl);b.position.set(Math.cos(i*Math.PI/2)*.7,Math.sin(i*Math.PI/2)*.7,0);b.rotation.z=i*Math.PI/2+Math.PI/2}
+    g.userData.blades=bl;
+    const desk=item(grp(g,.1,.75),"AI laptop","AI wrote the code for this map: the islands, bridges, buildings, and walking residents.");
+    mesh(G.box(1,.06,.55),"#D5BBA4",{y:.5},desk);[[-.45,-.22],[.45,-.22],[-.45,.22],[.45,.22]].forEach(([dx,dz])=>mesh(G.box(.05,.5,.05),PAL.wood,{x:dx,y:.25,z:dz},desk));
+    mesh(G.box(.5,.03,.32),"#b7bcc4",{y:.55},desk);
+    const scr=new THREE.Mesh(new THREE.PlaneGeometry(.5,.32),new THREE.MeshBasicMaterial({map:tex((x,w,h)=>{x.fillStyle="#2b332c";x.fillRect(0,0,w,h);["#B2C6A3","#D5C49D","#99B9AD","#CFAFA3","#B2C6A3"].forEach((cc,i)=>{x.fillStyle=cc;x.fillRect(30+(i%2)*40,30+i*44,180+((i*70)%160),16)})},256,164)}));
+    scr.position.set(0,.72,-.15);scr.rotation.x=-.25;desk.add(scr);person(desk,0,.55,"#B2C6A3");
+    item(board(g,{x:-1.55,z:.8,y:.75,w:.9,h:.75,ry:.4,draw:(x,w,h)=>{x.fillStyle="#fffdf6";x.fillRect(0,0,w,h);x.fillStyle="#2b332c";x.font=`700 40px ${FONT}`;x.fillText("Fact check",30,60);
+      ["ACS 2026","BRFSS 2022","Community Guide","STOP CRC","IDPH program"].forEach((s,i)=>{x.fillStyle="#5aa64c";x.font=`700 34px ${FONT}`;x.fillText("✓",30,120+i*58);x.fillStyle="#2b332c";x.font=`500 30px ${FONT}`;x.fillText(s,75,120+i*58)})}}),
+      "Fact-check board","A person checked every number on this map against one of these sources. No source, no number.");
+    flowers(g,1.6,.9);
+  }
+};
+const islandObjs=[];
+ISLES.forEach((d,i)=>{
+  const ang=-Math.PI/2+i*Math.PI/3+Math.PI/6,y=[1.4,-.6,1.8,-1,1.1,0][i];
+  seed=21+i*13;
+  const g=island(ISLE_R);
+  // Give each floating island a muted storybook grass top and a complementary earth edge.
+  g.children[0].material=MORANDI_LAWNS[i];g.children[1].material=MORANDI_SOILS[i];
+  g.position.set(Math.cos(ang)*RING,y,Math.sin(ang)*RING);g.rotation.y=-ang+Math.PI/2;scene.add(g);
+  decorate[d.id](g,CSS(d.col));
+  stones(g,2.9,0,6.2);groundcover(g,ISLE_R,26);rimTrees(g,ISLE_R,26,[[4.3,5.1]]);storybookVillage(g,ISLE_R,i);fence(g,ISLE_R-.25,.5,1.5);
+  // Miniature village scenery on the rear edge, kept small to preserve clickable exhibits.
+  [[-2.75,-2.85,.68],[2.75,-2.85,.6]].forEach(([hx,hz,scale],j)=>{
+    house(g,hx,hz,PAL.roofs[(i+j)%PAL.roofs.length],.3+j*.3,scale);
+    mesh(G.cyl(.24,.28,.14,7),"#D7C7A7",{x:hx+.48,y:.07,z:hz+.3},g,false);
+    mesh(G.ico(.22,0),"#D5B8B4",{x:hx+.52,y:.25,z:hz+.32},g,false);
+  });
+  // Removed the pale-blue vertical waterfall strips for a cleaner floating-island scene.
+  g.traverse(o=>o.userData.isle=i);d.g=g;d.baseY=y;islandObjs.push(g);
+});
+
+/* ---------- rope bridges ---------- */
+const bunt=["#CFAFA3","#D5C49D","#A9C0B7","#B9ADBD","#ffffff"];
+function bridge(A,B){const grp=new THREE.Group();scene.add(grp);
+  const dir=new THREE.Vector3().subVectors(B,A),side=new THREE.Vector3(-dir.z,0,dir.x).normalize();
+  const n=Math.round(dir.length()/.45),pts=[];
+  for(let k=0;k<=n;k++){const t=k/n,p=new THREE.Vector3().lerpVectors(A,B,t);p.y-=Math.sin(Math.PI*t)*.8;pts.push(p)}
+  for(let k=0;k<n;k++){const p=pts[k].clone().lerp(pts[k+1],.5);const pl=mesh(G.box(1.4,.09,.32),k%3?"#BBA68D":"#AC947C",{x:p.x,y:p.y,z:p.z},grp);pl.lookAt(pts[k+1])}
+  [-1,1].forEach(sg=>{const rope=pts.map(p=>p.clone().addScaledVector(side,sg*.72).add(new THREE.Vector3(0,.65,0)));
+    grp.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rope),n*2,.03,4,false),mat("#9F8C76")));
+    for(let k=0;k<=n;k+=3){const p=pts[k].clone().addScaledVector(side,sg*.72);mesh(G.cyl(.04,.04,.7,4),PAL.wood,{x:p.x,y:p.y+.3,z:p.z},grp)}
+    if(sg>0)for(let k=1;k<n;k+=2)mesh(G.cone(.14,.28,3),bunt[k%5],{x:rope[k].x,y:rope[k].y-.2,z:rope[k].z,rx:Math.PI},grp,false);});
+  return pts}
+ISLES.forEach(d=>{const P=d.g.position,dv=new THREE.Vector3(P.x,0,P.z).normalize();
+  const A=dv.clone().multiplyScalar(HUB_R-.3),B=new THREE.Vector3(P.x,P.y,P.z).addScaledVector(dv,-(ISLE_R-.3));d.path=bridge(A,B)});
+/* ---------- residents who walk the paths and bridges ---------- */
+const SAY=[
+ ["I'm 52. I keep meaning to get screened.","No regular doctor, so where would I even go?","The test costs what? I never asked.","My uncle found out too late."],
+ ["I'm a navigator. Let's pick a test together.","Need a ride to your colonoscopy? I can help.","I'll call you when your kit results are in.","We speak Spanish and Polish here too."],
+ ["I did the home test. It took ten minutes!","My result was normal. Back in a year.","Abnormal result, so I booked my follow-up.","More of my neighbors got screened this year."],
+ ["We compare clinics with and without navigators.","Two years before, two years after.","Did screening rise more here? That's the question.","Clinics already report these numbers."],
+ ["I'm asking my clinic about the free test.","Lawmakers, please fund navigators!","Tell a friend who just turned 45.","I wrote to my state representative."],
+ ["AI built this map. I checked every number.","No source, no number. That's our rule.","Want to make your own island? Try it!","These people are made up. The data are real."]
+];
+const HUB_SAY=["Welcome to Health Plaza!","Six islands to explore. Pick a bridge!","The fountain's my favorite spot.","Have you collected all six stamps?"];
+const walkers=[];
+const nRing=PHONE?2:4,nHub=PHONE?3:6;
+ISLES.forEach((d,i)=>{seed=500+i*17;for(let k=0;k<nRing;k++){const g=chibi(null,(i===1||i===2)&&k===0?"worker":null);d.g.add(g);g.userData.isle=undefined;
+  walkers.push({g,mode:"ring",r:2.8+(k%2)*.22,a:rnd()*6.28,sp:(.18+rnd()*.12)*(k%2?1:-1),line:SAY[i][k%4]})}});
+seed=777;for(let k=0;k<nHub;k++){const g=chibi();hub.add(g);walkers.push({g,mode:"ring",r:1.6+(k%2)*.35,a:k/nHub*6.28,sp:(.16+rnd()*.1)*(k%2?1:-1),line:HUB_SAY[k%4]})}
+ISLES.forEach((d,i)=>{if(PHONE&&i%2)return;const g=chibi();scene.add(g);walkers.push({g,mode:"bridge",path:d.path,t:rnd(),dir:rnd()<.5?1:-1,sp:.05+rnd()*.02,line:`On my way to ${d.name}!`})});
+walkers.forEach(w=>w.g.traverse(o=>o.userData.walker=w));
+const STRIDE=.62; // ground covered by one full step cycle (left + right)
+function animateLimbs(g,ph,moving){const u=g.userData,s=moving?Math.sin(ph):0,amp=u.older?.4:.55;
+  u.legs[0].rotation.x=s*amp;u.legs[1].rotation.x=-s*amp;u.arms[0].rotation.x=-s*amp*.85;u.arms[1].rotation.x=s*amp*.85;
+  u.body.position.y=moving?Math.abs(Math.sin(ph))*.045:0;u.body.rotation.z=moving?Math.cos(ph)*.035:0;u.body.rotation.x=moving?.07:0}
+function gaitStep(w,ds){w.ph=(w.ph||0)+ds/STRIDE*Math.PI*2;animateLimbs(w.g,w.ph,ds>1e-5)}
+const tmpV=new THREE.Vector3();
+function stepWalkers(t,dt){walkers.forEach(w=>{
+  let ds;
+  if(w.mode==="ring"){w.a+=w.sp*dt;ds=Math.abs(w.sp)*dt*w.r*1.0;const x=Math.cos(w.a)*w.r,z=Math.sin(w.a)*w.r;w.g.position.set(x,0,z);
+    const vx=-Math.sin(w.a)*Math.sign(w.sp),vz=Math.cos(w.a)*Math.sign(w.sp);w.g.rotation.y=Math.atan2(vx,vz)}
+  else{if(!w.len){w.len=0;for(let q=1;q<w.path.length;q++)w.len+=w.path[q].distanceTo(w.path[q-1])}const was=w.t;w.t+=w.dir*w.sp*dt;if(w.t>1){w.t=1;w.dir=-1}if(w.t<0){w.t=0;w.dir=1}
+    const n=w.path.length-1,f=w.t*n,k=Math.min(n-1,Math.floor(f)),a=w.path[k],b=w.path[k+1];
+    w.g.position.lerpVectors(a,b,f-k);tmpV.copy(w.dir>0?b:a);w.g.lookAt(tmpV.x,w.g.position.y,tmpV.z);ds=Math.abs(w.t-was)*w.len}
+  gaitStep(w,ds/w.g.scale.x)})}
+
+
+/* ---------- sky ---------- */
+const CLOUD=new THREE.MeshStandardMaterial({color:"#C1CFC5",flatShading:true,roughness:1,transparent:true,opacity:.62,depthWrite:false});
+const clouds=[];
+function cloud(x,y,z,s,flat=.5){const c=new THREE.Group();c.position.set(x,y,z);const n=4+Math.floor(rnd()*4);
+  for(let i=0;i<n;i++)mesh(G.ico(1+rnd()*1.1,0),CLOUD,{x:(i-n/2)*1.3+rnd(),y:rnd()*.5,z:(rnd()-.5)*2.4,sy:flat},c,false);
+  c.scale.setScalar(s);c.userData.x0=x;scene.add(c);clouds.push(c);return c}
+seed=99;
+for(let i=0;i<(PHONE?6:10);i++){const a=rnd()*6.28,r=14+rnd()*70;cloud(Math.cos(a)*r,-18-rnd()*9,Math.sin(a)*r,0.85+rnd()*.75,.4)}
+for(let i=0;i<(PHONE?5:8);i++){const a=rnd()*6.28,r=30+rnd()*40;cloud(Math.cos(a)*r,4+rnd()*14,Math.sin(a)*r,.5+rnd()*.45,.6)}
+// Low, warm ivory cloudlets directly beneath the floating island group.
+// Unlike the distant ambient clouds, these remain visible from the initial camera view.
+// They are translucent, flattened puffs with gaps so the rocky undersides remain visible.
+const UNDER_CLOUD=new THREE.MeshStandardMaterial({color:"#F5F1E7",roughness:1,flatShading:true,transparent:true,opacity:.40,depthWrite:false});
+const underClouds=[];
+function underCloud(x,y,z,scale=1){
+  const g=new THREE.Group();g.position.set(x,y,z);scene.add(g);
+  const shapes=[[-1.0,0,0,1.05,.27,.70],[.3,.08,.2,1.35,.33,.84],[1.6,-.02,-.15,.88,.23,.63]];
+  for(const [px,py,pz,sx,sy,sz] of shapes){
+    const puff=mesh(G.ico(1,1),UNDER_CLOUD,{x:px,y:py,z:pz,sx:sx*scale,sy:sy*scale,sz:sz*scale},g,false);
+    puff.receiveShadow=false;
+  }
+  g.userData.phase=underClouds.length*.75;
+  underClouds.push(g);return g;
+}
+// Carefully spaced under the front and side islands, not over the village roofs.
+[
+ [-22,-8,7,1.15],[-15,-9,15,1.2],[-5,-8.2,23,1.35],
+ [8,-9,20,1.15],[20,-8,12,1.25],[25,-9,0,1.1],
+ [-23,-9,-8,.95],[-8,-9,-18,1.1],[12,-9,-16,1.15],
+ [-2,-7.7,7,.9],[8,-8,1,.8]
+].forEach(v=>underCloud(...v));
+const blobs=[];[["#A5BA9C",-36,8,-22,3.2],["#C9D8D2",-28,14,-34,2.4],["#A5BA9C",40,10,-10,2.6],["#D1BDB9",30,16,-34,2],["#A5BA9C",-44,0,8,2.4]].forEach(([c,x,y,z,s])=>blobs.push(mesh(G.ico(s,1),c,{x,y,z,sy:.75},scene,false)));
+const balloons=[];
+[["#D5C49D",12,13,-20],["#f6b8c6",-6,16,-30],["#a9dbe0",34,11,-12]].forEach(([c,x,y,z],i)=>{const b=new THREE.Group();b.position.set(x,y,z);scene.add(b);
+  mesh(G.ico(1.5,1),c,{y:1.5,sy:1.15},b);mesh(G.box(.55,.4,.55),"#c79f78",{y:-.55},b);
+  [[-.22,-.22],[.22,-.22],[-.22,.22],[.22,.22]].forEach(([dx,dz])=>mesh(G.cyl(.02,.02,1.1,3),"#9a8270",{x:dx,z:dz},b));b.userData.y=y;b.userData.p=i*2;balloons.push(b)});
+const rocks=[];for(let i=0;i<16;i++){const a=rnd()*6.28,r=8+rnd()*24;rocks.push(mesh(G.dod(.3+rnd()*.45),"#4a4541",{x:Math.cos(a)*r,y:-4+rnd()*9,z:Math.sin(a)*r},scene))}
+const flocks=[];
+const BIRDS=[["#eeeeea","#ffffff"],["#d6d8d3","#f6f5f0"],["#c3c6c1","#efeee8"],["#f7f6f2","#ffffff"]];
+function bird(c){const b=new THREE.Group(),[col,belly]=c;
+  part(gSph(.22,16,12),col,{sx:.95,sy:.85,sz:1.25},b,false);                       // round body
+  part(gSph(.17,16,12),belly,{y:-.06,z:.06,sx:.8,sy:.6,sz:1},b,false);             // belly
+  part(gSph(.15,16,12),col,{y:.13,z:.24},b,false);                                 // head
+  part(geo("beak",()=>new THREE.ConeGeometry(.045,.12,10)),"#f2a541",{y:.12,z:.42,rx:Math.PI/2},b,false);
+  [-1,1].forEach(s=>{part(gSph(.03,10,8),"#2a2420",{x:s*.075,y:.17,z:.35},b,false);part(gSph(.01,6,4),"#ffffff",{x:s*.075+.008,y:.18,z:.378},b,false);
+    part(gSph(.025,8,6),"#f7a7b5",{x:s*.11,y:.1,z:.32},b,false)});              // eyes + blush
+  part(geo("tail",()=>new THREE.ConeGeometry(.09,.22,8)),col,{y:.05,z:-.32,rx:-Math.PI/2-.3,sx:1.4,sz:.4},b,false);
+  const wings=[-1,1].map(s=>{const pv=new THREE.Group();pv.position.set(s*.16,.06,.02);b.add(pv);
+    part(gSph(.18,14,10),col,{x:s*.17,sx:1.15,sy:.18,sz:.75},pv,false);return pv});
+  b.userData.wings=wings;return b}
+for(let f=0;f<2;f++){const fl=new THREE.Group();scene.add(fl);const pal=BIRDS[f*2+Math.floor(rnd()*2)];
+  for(let i=0;i<5;i++){const b=bird(i===2?BIRDS[(f+2)%4]:pal);b.position.set((i-2)*1.1,Math.abs(i-2)*.15,-Math.abs(i-2)*1);b.userData.ph=i*.7;b.scale.setScalar(.62);fl.add(b)}
+  fl.userData={r:34+f*12,h:8+f*5,sp:.05+f*.02,ph:f*3};flocks.push(fl)}
+
+/* ---------- falling particles: petals, leaves, snow (half on phones) ---------- */
+const N_FALL=PHONE?18:36;
+const PART=new THREE.MeshStandardMaterial({color:"#C6A47E",flatShading:true});
+const snowGeo=G.ico(.08,0),leafGeo=G.box(.18,.02,.12),petalGeo=G.box(.13,.02,.1);
+const parts=[];for(let i=0;i<N_FALL;i++)parts.push(mesh(leafGeo,PART,{x:(rnd()-.5)*80,y:rnd()*26-4,z:(rnd()-.5)*80},scene,false));
+/* rain: line segments (half on phones) */
+const N_RAIN=0;
+const rainPos=new Float32Array(N_RAIN*6);const rainGeo=new THREE.BufferGeometry();rainGeo.setAttribute("position",new THREE.BufferAttribute(rainPos,3));
+for(let i=0;i<N_RAIN;i++){const x=(rnd()-.5)*90,y=rnd()*44-18,z=(rnd()-.5)*90;rainPos.set([x,y,z,x,y-.9,z],i*6)}
+const rain=new THREE.LineSegments(rainGeo,new THREE.LineBasicMaterial({color:0xdbe6f2,transparent:true,opacity:.55}));rain.frustumCulled=false;rain.visible=false;scene.add(rain);
+
+/* ---------- season, weather, time of day ---------- */
+const SEASONS={
+  bloom:{fol:["#63875F","#4B7850","#829D72"],acc:"#C9A69D",grass:"#A0B394",part:"#CBB9AA",geo:null,sun:.85},
+  spring:{fol:["#77966A","#608359","#9AAC82"],acc:"#CFAFA3",grass:"#A3B99A",part:"#CFAFA3",geo:petalGeo,sun:.85},
+  summer:{fol:["#5A8051","#426F46","#779568"],acc:"#97A784",grass:"#93AD8B",part:null,sun:.95},
+  autumn:{fol:["#718B5F","#5D7654","#A5A47A"],acc:"#C89D6D",grass:"#A6B18B",part:"#D0AD78",geo:leafGeo,sun:.83},
+  winter:{fol:["#f1f4f2","#7fa58c","#dfe9e4"],acc:"#ffffff",grass:"#e8eee8",part:"#ffffff",geo:snowGeo,sun:.95}
+};
+const TIMES={
+  day:{bg:"#B9CBAF",amb:.12,hemi:.37,hc:"#F1EFDF",sun:.68,sc:"#F3E7D5",sp:[30,55,25],glow:0,cloud:"#F5F1E7"},
+  sunset:{bg:"#efd2c2",amb:.2,hemi:.55,hc:"#ffe6d6",sun:.7,sc:"#ffc49a",sp:[60,18,10],glow:.4,cloud:"#fde9e2"},
+  night:{bg:"#34405c",amb:.16,hemi:.35,hc:"#b8c6ea",sun:.25,sc:"#c9d6ff",sp:[-20,45,-25],glow:1,cloud:"#c3cbe0"}
+};
+const WEATHER={sunny:{mix:0,sunK:1,hemiK:1,cloudMix:0,rain:0,wind:.012},rain:{mix:.42,sunK:.5,hemiK:.85,cloudMix:.45,rain:1,wind:.05},typhoon:{mix:.66,sunK:.3,hemiK:.72,cloudMix:.7,rain:2,wind:.2}};
+const GRAY=new THREE.Color("#9aa6a6"),GRAYD=new THREE.Color("#8b9696");
+const env={season:"bloom",weather:"sunny",tod:"day"};
+function skyTex(center,edge,softDay=false){const c=document.createElement("canvas");c.width=512;c.height=512;const x=c.getContext("2d");
+  if(softDay){
+    // Gentle sage at the top, a hint of buttery yellow through the center,
+    // and a cloudy warm off-white fade toward the bottom.
+    const base=x.createLinearGradient(0,0,0,512);
+    base.addColorStop(0,"#C5D5B5");base.addColorStop(.32,"#D2DCB9");
+    base.addColorStop(.57,"#E1E3BF");base.addColorStop(.78,"#EBEBD9");base.addColorStop(1,"#F3F1E9");
+    x.fillStyle=base;x.fillRect(0,0,512,512);
+    const glow=x.createRadialGradient(256,255,18,256,260,265);
+    glow.addColorStop(0,"rgba(251,235,176,.32)");glow.addColorStop(.48,"rgba(247,238,201,.16)");glow.addColorStop(1,"rgba(248,236,202,0)");
+    x.fillStyle=glow;x.fillRect(0,0,512,512);
+  }else{
+    const g=x.createRadialGradient(256,230,10,256,256,330);
+    g.addColorStop(0,center);g.addColorStop(.22,center);g.addColorStop(1,edge);
+    x.fillStyle=g;x.fillRect(0,0,512,512);
+  }
+  return new THREE.CanvasTexture(c);
+}
+let SKY=null;
+function applyEnv(){
+  const s=SEASONS[env.season],t=TIMES[env.tod],w=WEATHER[env.weather];
+  FOL.forEach((m,i)=>m.color.set(s.fol[i]));ACC.color.set(s.acc);GRASS.color.set(s.grass);
+  if(s.part){PART.color.set(s.part);parts.forEach(p=>p.geometry=s.geo)}
+  const bg=new THREE.Color(t.bg).lerp(GRAY,w.mix);const glow=new THREE.Color("#D0D5B7");
+  if(SKY)SKY.dispose();SKY=skyTex("#"+glow.getHexString(),"#"+bg.getHexString(),env.tod==="day"&&env.weather==="sunny");scene.background=SKY;
+  scene.fog.color.copy(bg.clone().lerp(glow,.3));document.body.style.background=env.tod==="day"&&env.weather==="sunny"?"linear-gradient(to bottom,#C5D5B5 0%,#E1E3BF 56%,#F3F1E9 100%)":`radial-gradient(circle at 50% 45%,#${glow.getHexString()} 0%,#${bg.getHexString()} 65%)`;
+  amb.intensity=t.amb*w.hemiK;hemi.intensity=t.hemi*w.hemiK;hemi.color.set(t.hc);
+  sun.intensity=t.sun*w.sunK*(env.tod==="day"?s.sun:1);sun.color.set(t.sc);sun.position.set(...t.sp);
+  GLOW.emissive.set(t.glow||w.rain?"#ffcf6a":"#000000");GLOW.emissiveIntensity=Math.max(t.glow,w.rain?.35:0);
+  CLOUD.color.set(t.cloud).lerp(GRAYD,w.cloudMix);
+  rain.material.opacity=w.rain===2?.75:.5;
+    updateFalling();
+}
+function updateFalling(){const s=SEASONS[env.season],w=WEATHER[env.weather];
+  parts.forEach(p=>p.visible=!calm&&!!s.part&&w.rain<2);
+  rain.visible=!calm&&w.rain>0;}
+SEASONS.bloom.geo=petalGeo;applyEnv();
+
+/* ---------- walker ---------- */
+const walker=chibi(null,"worker");scene.add(walker);
+part(geo("clip",()=>new THREE.BoxGeometry(.2,.26,.03)),"#fff8e8",{x:.21,y:.48,z:.14,rx:-.3},walker.userData.body);part(geo("clipb",()=>new THREE.BoxGeometry(.08,.03,.035)),"#9a8270",{x:.21,y:.61,z:.11},walker.userData.body);
+walker.position.set(.8,0,.3);walker.userData.at=-1;let walk=null;const navGait={g:walker,ph:0};
+function sendWalker(i){const from=walker.userData.at;if(from===i&&i>=0)return;
+  const route=[walker.position.clone()];
+  if(from>=0){const pts=ISLES[from].path;for(let k=pts.length-1;k>=0;k--)route.push(pts[k].clone())}
+  route.push(new THREE.Vector3(.8,0,.3));
+  if(i>=0){ISLES[i].path.forEach(p=>route.push(p.clone()));const P=ISLES[i].g.position;route.push(new THREE.Vector3(P.x*.93,P.y,P.z*.93))}
+  let L=0;const seg=[0];for(let k=1;k<route.length;k++){L+=route[k].distanceTo(route[k-1]);seg.push(L)}
+  walk={route,seg,L,t0:performance.now(),dur:calm?0:Math.min(9000,L*380)};walker.userData.at=i}
+
+/* ---------- labels, camera, picking ---------- */
+const labs=ISLES.map((d,i)=>{const b=document.createElement("button");b.className="lab";b.type="button";b.innerHTML=`<small>0${i+1} / ${d.tag}</small><b>${d.name}</b>`;b.onclick=()=>{endTour();openIsle(i)};$("#labels").appendChild(b);return b});
+const hubLab=document.createElement("button");hubLab.className="lab";hubLab.type="button";hubLab.innerHTML="<small>Central / start</small><b>Health Plaza</b>";hubLab.onclick=()=>{endTour();closePanel()};$("#labels").appendChild(hubLab);
+let fly=null;
+function home(){const as=innerWidth/innerHeight,k=as>=1.7?1.12:1.12*1.7/as;fly={pos:innerWidth<=760?new THREE.Vector3(66,50,0):new THREE.Vector3(0,34*k,50*k),tgt:new THREE.Vector3(0,-2,0)};controls.autoRotate=!calm&&innerWidth>760}
+function flyTo(i){const P=ISLES[i].g.position,dv=new THREE.Vector3(P.x,0,P.z).normalize(),far=innerWidth<760?22:17;
+  fly={pos:new THREE.Vector3(P.x,P.y,P.z).addScaledVector(dv,far).add(new THREE.Vector3(0,far*.75,0)),tgt:new THREE.Vector3(P.x,P.y+1,P.z)};controls.autoRotate=false;
+  if(calm){camera.position.copy(fly.pos);controls.target.copy(fly.tgt);fly=null}}
+controls.addEventListener("start",()=>{fly=null;controls.autoRotate=false});
+camera.position.set(innerWidth<=760?70:0,48,innerWidth<=760?0:60);controls.target.set(0,-2,0);home();
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();let downAt=null;
+renderer.domElement.addEventListener("pointerdown",e=>downAt=[e.clientX,e.clientY]);
+renderer.domElement.addEventListener("pointerup",e=>{if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>6)return;
+  const r=renderer.domElement.getBoundingClientRect();mouse.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+  ray.setFromCamera(mouse,camera);const wh=ray.intersectObjects(walkers.map(w=>w.g),true)[0];if(wh&&wh.object.userData.walker){speak(wh.object.userData.walker);return}const ih=ray.intersectObjects(ITEMS.map(t=>t.g),true)[0];if(ih&&ih.object.userData.item){showItem(ih.object.userData.item);return}const hit=ray.intersectObjects(islandObjs,true)[0];if(hit&&hit.object.userData.isle!=null){endTour();openIsle(hit.object.userData.isle)}});
+let saying=null;function speak(w){saying={w,until:performance.now()+3500};const b=$("#say");b.textContent=w.line;b.hidden=false}
+function showItem(it){if(it.action){it.action();return}saying={w:{g:it.g},until:performance.now()+6500,lift:2.4};const b=$("#say");b.innerHTML=`<b>${it.name}</b><br>${it.text}`;b.hidden=false}
+
+/* ---------- panel and passport ---------- */
+const visited=new Set();let cur=-1;
+function stamp(i){visited.add(i);badges()}
+function badges(){if(labs[0])labs[0].classList.toggle("start-here",visited.size===0);$("#badges").innerHTML=ISLES.map((d,i)=>`<button type="button" class="${visited.has(i)?"on":""}" style="${visited.has(i)?`background:${CSS(d.col)}`:""}" aria-label="${d.name}${visited.has(i)?", visited":""}">0${i+1}</button>`).join("");
+  $("#badges").querySelectorAll("button").forEach((b,i)=>b.onclick=()=>{endTour();openIsle(i)});
+  $("#pcount").textContent=`${visited.size} / 6`;labs.forEach((l,i)=>{l.classList.toggle("seen",visited.has(i));l.classList.toggle("sel",i===cur)})}
+function applyOffset(){const w=innerWidth,h=innerHeight;
+  if(!$("#panel").hidden){if(w>760)camera.setViewOffset(w,h,190,0,w,h);else camera.setViewOffset(w,h,0,h*.26,w,h)}
+  else if(!$("#caption").hidden)camera.setViewOffset(w,h,0,h*(w>760?.08:.14),w,h);
+  else if(w>760){const heroOn=!$("#hero").hidden&&getComputedStyle($("#hero")).display!=="none";
+    // overview: centre the islands in the space the corner cards leave open
+    const left=heroOn?372:(w>1100?0:0);camera.setViewOffset(w,h,-left/2,-h*.03,w,h)}
+  else camera.clearViewOffset();camera.updateProjectionMatrix()}
+$("#hero").hidden=true;
+function hideHero(){if($("#hero").hidden)return;$("#hero").hidden=true;applyOffset()}
+$("#heroX").onclick=hideHero;
+document.querySelector(".brand").addEventListener("click",()=>{$("#hero").hidden=!$("#hero").hidden;applyOffset()});
+function openIsle(i){$("#hero").hidden=true;const d=ISLES[i];cur=i;stamp(i);flyTo(i);sendWalker(i);document.body.classList.add("open");
+  const conns=CONN.filter(c=>c[0]===d.id||c[1]===d.id).map(c=>{const o=ISLES.find(x=>x.id===(c[0]===d.id?c[1]:c[0]));return`<div class="conn"><b>${c[2]}</b> · links to ${o.name}<br>${c[3]}</div>`}).join("");
+  const nx=(i+1)%6;$("#panel").hidden=false;
+  $("#panel").innerHTML=`<div class="head" style="background:${CSS(d.col)}"><span class="kick">0${i+1} / ${d.tag}</span><h2>${d.name}</h2><button class="x" type="button" aria-label="Close" id="px">✕</button></div>
+  <div class="body"><p>${d.intro}</p>${d.secs.map(([h,b])=>`<div class="sec"><h3>${h}</h3>${b}</div>`).join("")}<div class="sec"><h3>Bridges</h3>${conns}</div>
+  <div class="navrow"><button class="go" type="button" id="pn">Next: ${ISLES[nx].name} →</button></div></div>`;
+  $("#px").onclick=()=>closePanel();$("#pn").onclick=()=>openIsle(nx);$("#panel").scrollTop=0;applyOffset()}
+function closePanel(){$("#panel").hidden=true;document.body.classList.remove("open");cur=-1;badges();applyOffset();home();sendWalker(-1)}
+
+/* ---------- guided tour with caption card ---------- */
+const STOP_MS=6500;let tour={on:false,i:0,paused:false,t0:0,left:STOP_MS,timer:0};
+function showStop(i){tour.i=(i+6)%6;const d=ISLES[tour.i];cur=tour.i;stamp(tour.i);flyTo(tour.i);sendWalker(tour.i);
+  $("#capStop").textContent=`Stop ${tour.i+1} of 6`;$("#capName").textContent=d.name;$("#capLine").textContent=LINE[tour.i];
+  tour.left=STOP_MS;tour.t0=performance.now();clearTimeout(tour.timer);if(!tour.paused)tour.timer=setTimeout(advance,STOP_MS)}
+function advance(){if(tour.i>=5){endTour(true,true);return}showStop(tour.i+1)}
+function startTour(){$("#hero").hidden=true;$("#panel").hidden=true;document.body.classList.remove("open");document.body.classList.remove("showset");
+  tour.on=true;tour.paused=false;$("#cPause").textContent="Pause";$("#caption").hidden=false;document.body.classList.add("touring");applyOffset();showStop(0);$("#cPause").focus()}
+function toast(msg,ms=6500){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,ms)}
+function endTour(goHome,finished){if(!tour.on)return;if(finished)setTimeout(()=>toast("Tour done! Tap any island name to read more, or use “Find screening near you” at the top."),400);tour.on=false;clearTimeout(tour.timer);$("#caption").hidden=true;document.body.classList.remove("touring");applyOffset();if(goHome){cur=-1;badges();home()}}
+$("#cPause").onclick=()=>{if(!tour.on)return;tour.paused=!tour.paused;$("#cPause").textContent=tour.paused?"Play":"Pause";
+  if(tour.paused){clearTimeout(tour.timer);tour.left-=performance.now()-tour.t0}else{tour.t0=performance.now();tour.timer=setTimeout(advance,tour.left)}};
+$("#cPrev").onclick=()=>showStop(tour.i-1);$("#cNext").onclick=()=>{if(tour.i>=5){endTour(true,true);return}showStop(tour.i+1)};
+$("#cClose").onclick=()=>endTour(true);
+$("#cOpen").onclick=()=>{const i=tour.i;endTour(false);openIsle(i)};
+$("#bTour").onclick=startTour;
+
+/* ---------- other controls ---------- */
+$("#bHome").onclick=()=>{endTour();closePanel()};
+$("#bMotion").onclick=()=>{calm=!calm;$("#bMotion").setAttribute("aria-pressed",calm);controls.autoRotate=!calm&&cur<0;updateFalling()};
+if(calm)$("#bMotion").setAttribute("aria-pressed","true");
+$("#bHelp").onclick=()=>openWelcome();
+function openWelcome(){$("#welcome").hidden=false;$("#wTour").focus()}
+function closeWelcome(){$("#welcome").hidden=true;try{localStorage.setItem("crcIsland.welcomed","1")}catch(e){}}
+$("#wTour").onclick=()=>{closeWelcome();startTour()};
+$("#wSkip").onclick=()=>{closeWelcome();toast("Start with 01 / Problem Island. Tap any island name to open it.",5000)};
+$("#wFind").onclick=()=>{closeWelcome();openFinder()};
+$("#welcome").addEventListener("click",e=>{if(e.target.id==="welcome")closeWelcome()});
+let seen=false;try{seen=localStorage.getItem("crcIsland.welcomed")==="1"}catch(e){}
+if(!seen)setTimeout(openWelcome,600);
+function openFinder(){const f=$("#finder");f.hidden=false;$("#fClose").focus()}
+$("#bFind").onclick=()=>{endTour(false);openFinder()};
+$("#fClose").onclick=()=>{$("#finder").hidden=true};
+$("#finder").addEventListener("click",e=>{if(e.target.id==="finder")e.target.hidden=true});
+$("#copyNum").onclick=()=>{const b=$("#copyNum"),done=()=>{b.textContent="Copied"},sel=()=>{const r=document.createRange();r.selectNodeContents($("#acsNum"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected. Copy it"};
+  try{navigator.clipboard.writeText("1-800-227-2345").then(done,sel)}catch(e){sel()}};
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-find]"))openFinder()});
+$("#bText").onclick=()=>{const tv=$("#textview");tv.hidden=false;
+  tv.innerHTML=`<div class="card" role="dialog" aria-modal="true" aria-label="Text view"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><h2>CRC Screening Island, as text</h2><button class="pill" id="tvx" type="button">Close</button></div><p class="cite">The same content as the 3D map, in reading order.</p>${ISLES.map((d,i)=>`<section><h3>0${i+1}. ${d.name}: ${d.tag}</h3><p>${d.intro}</p>${d.secs.map(([h,b])=>`<h3 style="font-size:.95rem">${h}</h3>${b}`).join("")}</section>`).join("")}</div>`;
+  $("#tvx").onclick=()=>tv.hidden=true;$("#tvx").focus()};
+$("#textview").addEventListener("click",e=>{if(e.target.id==="textview")e.target.hidden=true});
+addEventListener("keydown",e=>{if(e.key==="Escape"){if(!$("#welcome").hidden)closeWelcome();$("#textview").hidden=true;$("#finder").hidden=true;endTour(true)}});
+badges();
+
+/* ---------- loop ---------- */
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w<760?(w/h<.7?68:48):36;applyOffset()}
+addEventListener("resize",resize);resize();
+const v=new THREE.Vector3(),clock=new THREE.Clock();
+function frame(){const t=clock.getElapsedTime(),w=WEATHER[env.weather],storm=env.weather==="typhoon";
+  if(fly){camera.position.lerp(fly.pos,.05);controls.target.lerp(fly.tgt,.06);if(camera.position.distanceTo(fly.pos)<.05)fly=null}
+  controls.update();
+  // balloons: grounded (sink below the clouds) during a typhoon
+  balloons.forEach(b=>{const target=storm?-34:b.userData.y+(calm?0:Math.sin(t*.5+b.userData.p)*.8);b.position.y+=(target-b.position.y)*(calm?1:.02);b.visible=b.position.y>-30;if(!calm&&!storm)b.rotation.y=t*.08});
+  if(!calm){
+    ISLES.forEach((d,i)=>{d.g.position.y=d.baseY+Math.sin(t*.7+i)*.12;if(d.fall)d.fall.material.opacity=.75+Math.sin(t*6+i)*.08});
+    const sway=w.wind*(storm?1.4:1);trees.forEach(g=>{g.rotation.z=Math.sin(t*(storm?3.2:1.4)+g.userData.ph)*sway;g.rotation.x=Math.cos(t*(storm?2.6:1.1)+g.userData.ph)*sway*.5});
+    clouds.forEach((c,i)=>{c.position.x+=storm?.09:env.weather==="rain"?.03:Math.sin(t*.04+i)*.008;if(c.position.x>95)c.position.x=-95});
+    blobs.forEach((b,i)=>{b.rotation.y=t*.05+i});
+    rocks.forEach((r,i)=>{r.rotation.x=t*.2+i});
+    flocks.forEach(f=>{f.visible=!storm;const u=f.userData,a=t*u.sp+u.ph;f.position.set(Math.cos(a)*u.r,u.h+Math.sin(t*.4)*.6,Math.sin(a)*u.r);f.rotation.y=-a;
+      f.children.forEach(b=>{const fl=Math.sin(t*7+b.userData.ph);b.userData.wings.forEach((wg,j)=>wg.rotation.z=(j?-1:1)*fl*.6);b.position.y=Math.abs(b.position.x)*.14+Math.cos(t*7+b.userData.ph)*.06})});
+    const snow=env.season==="winter",gust=storm?.12:env.weather==="rain"?.03:0;
+    parts.forEach((p,i)=>{if(!p.visible)return;p.position.y-=snow?.03:.022;p.position.x+=Math.sin(t+i)*.012+gust;if(!snow){p.rotation.x+=.03;p.rotation.z+=.02}if(p.position.y<-16){p.position.y=22;p.position.x=(Math.random()-.5)*80}});
+    if(rain.visible){const sp=storm?1.3:.7,slant=storm?.55:.06,len=storm?1.5:.9;
+      for(let i=0;i<N_RAIN;i++){const o=i*6;let y=rainPos[o+1]-sp,x=rainPos[o]+slant*sp;if(y<-20){y=26;x=(Math.random()-.5)*90}if(x>45)x-=90;
+        rainPos[o]=x;rainPos[o+1]=y;rainPos[o+3]=x-slant*len;rainPos[o+4]=y-len}
+      rainGeo.attributes.position.needsUpdate=true}
+    const bl=ISLES[5].g.userData.blades;if(bl)bl.rotation.z+=storm?.25:.02;
+    stepWalkers(t,Math.min(.05,t-(frame.last||t)));
+  }
+  if(walk){const k=walk.dur?Math.min(1,(performance.now()-walk.t0)/walk.dur):1,dist=k*walk.L;
+    let j=1;while(j<walk.seg.length-1&&walk.seg[j]<dist)j++;
+    const a=walk.route[j-1],b=walk.route[j],f=(dist-walk.seg[j-1])/Math.max(1e-4,walk.seg[j]-walk.seg[j-1]);
+    const before=walker.position.clone();walker.position.lerpVectors(a,b,Math.min(1,f));
+    if(k<1){walker.lookAt(b.x,walker.position.y,b.z);navGait.g=walker;gaitStep(navGait,before.distanceTo(walker.position)/walker.scale.x)}else{walk=null;animateLimbs(walker,0,false)}}
+  frame.last=t;if(saying){if(performance.now()>saying.until){saying=null;$("#say").hidden=true}else{saying.w.g.getWorldPosition(v);v.y+=saying.lift||1.6;v.project(camera);const b=$("#say");b.style.left=((v.x+1)/2*innerWidth)+"px";b.style.top=((1-v.y)/2*innerHeight)+"px"}}
+  if(tour.on){const el=tour.paused?(STOP_MS-tour.left):(STOP_MS-tour.left)+(performance.now()-tour.t0);$("#capBar").style.width=Math.min(100,el/STOP_MS*100)+"%"}
+  const put=(el,pos,lift)=>{v.copy(pos);v.y+=lift;v.project(camera);if(v.z>1){el.style.display="none";return}el.style.display="";const hw=el.offsetWidth/2+4;el.style.left=Math.min(innerWidth-hw,Math.max(hw,(v.x+1)/2*innerWidth))+"px";el.style.top=((1-v.y)/2*innerHeight)+"px"};
+  ISLES.forEach((d,i)=>put(labs[i],d.g.position,4.8));put(hubLab,hub.position,5.6);if(cur>=0)hubLab.style.display="none";
+  renderer.render(scene,camera);requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+window.__test={openWelcome,openFinder,walker,look:(a,b,c,x,y,z)=>{fly=null;controls.autoRotate=false;camera.position.set(a,b,c);controls.target.set(x,y,z)},ITEMS,walkers,people,env,parts,rain,balloons,tour,N_FALL,N_RAIN,applyEnv,get calm(){return calm}};
+</script>
+
+</body>
+</html>
