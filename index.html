@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Explore a colorectal cancer screening plan as six floating islands: the problem, a patient navigator program, its impact, how it will be evaluated, and where to get screened in Illinois.">
+<meta name="description" content="Explore six interactive islands to learn why colorectal cancer screening matters, how programs can help, and what you can do.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -137,7 +137,8 @@ button{font-family:var(--font)}
 .caption .ctl{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .caption .ctl button{font-weight:500;font-size:.86rem;padding:7px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
 .caption .ctl button.main{background:var(--green);color:#fff;border-color:var(--green)}
-body.touring .cta,body.touring .hint,body.touring .bot-r,body.touring @media (max-width:1100px){.hint{display:none}}
+body.touring .cta,body.touring .hint,body.touring .bot-r{display:none}
+@media (max-width:1100px){.hint{display:none}}
 @media (max-width:900px){.hero{display:none}}
 @media (max-width:760px){
   .brand{padding:8px 12px 8px 8px}.brand i{width:36px;height:36px}.brand b{font-size:1rem}
@@ -150,7 +151,23 @@ body.touring .cta,body.touring .hint,body.touring .bot-r,body.touring @media (ma
   body.open .bot-r{display:none}
   .lab{padding:3px 8px 4px}.lab b{font-size:.78rem}.lab small{display:none}
 }
-@media (min-width:761px){body.open </style>
+@media (min-width:761px){body.open .bot-r{display:none}}
+/* Mobile island map: compact numbered island markers, with readable titles inside panels. */
+@media (max-width:760px){
+  .top-r{z-index:10;right:max(10px,env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px))}
+  .top-r .find{max-width:min(66vw,205px);white-space:normal;text-align:center;line-height:1.2;padding:10px 12px}
+  #labels .lab{width:35px;height:35px;min-width:35px;min-height:35px;padding:0!important;border-radius:50%;display:flex;align-items:center;justify-content:center;white-space:nowrap;background:rgba(250,247,240,.96);border:1.5px solid #8A9F80;box-shadow:0 3px 12px rgba(53,68,48,.15);font-size:0;z-index:3}
+  #labels .lab b,#labels .lab small{display:none!important}
+  #labels .lab::after{content:attr(data-mobile-number);display:block;font-size:.78rem;line-height:1;color:#344638;font-weight:700}
+  #labels .lab.sel{background:#dce7c7;border-color:#405b45}
+  .panel{z-index:12}
+  .caption{z-index:12}
+}
+@media (max-width:380px){
+  .top-r{gap:5px}
+  .top-r .find{font-size:.75rem;max-width:175px}
+}
+</style>
 
 <div id="stage"></div>
 
@@ -864,7 +881,8 @@ function sendWalker(i){const from=walker.userData.at;if(from===i&&i>=0)return;
 
 /* ---------- labels, camera, picking ---------- */
 const labs=ISLES.map((d,i)=>{const b=document.createElement("button");b.className="lab";b.type="button";b.innerHTML=`<small>0${i+1} / ${d.tag}</small><b>${d.name}</b>`;b.onclick=()=>{endTour();openIsle(i)};$("#labels").appendChild(b);return b});
-const hubLab=document.createElement("button");hubLab.className="lab";hubLab.type="button";hubLab.innerHTML="<small>Central / start</small><b>Health Plaza</b>";hubLab.onclick=()=>{endTour();closePanel()};$("#labels").appendChild(hubLab);
+labs.forEach((lab,i)=>{lab.dataset.mobileNumber=String(i+1).padStart(2,"0");lab.setAttribute("aria-label",`Explore ${ISLES[i].name}`);lab.title=ISLES[i].name});
+const hubLab=document.createElement("button");hubLab.className="lab";hubLab.type="button";hubLab.dataset.mobileNumber="H";hubLab.setAttribute("aria-label","Health Plaza");hubLab.title="Health Plaza";hubLab.innerHTML="<small>Central / start</small><b>Health Plaza</b>";hubLab.onclick=()=>{endTour();closePanel()};$("#labels").appendChild(hubLab);
 let fly=null;
 function home(){const as=innerWidth/innerHeight,k=as>=1.7?1.12:1.12*1.7/as;fly={pos:innerWidth<=760?new THREE.Vector3(66,50,0):new THREE.Vector3(0,34*k,50*k),tgt:new THREE.Vector3(0,-2,0)};controls.autoRotate=!calm&&innerWidth>760}
 function flyTo(i){const P=ISLES[i].g.position,dv=new THREE.Vector3(P.x,0,P.z).normalize(),far=innerWidth<760?22:17;
@@ -985,6 +1003,25 @@ function frame(){const t=clock.getElapsedTime(),w=WEATHER[env.weather],storm=env
   if(tour.on){const el=tour.paused?(STOP_MS-tour.left):(STOP_MS-tour.left)+(performance.now()-tour.t0);$("#capBar").style.width=Math.min(100,el/STOP_MS*100)+"%"}
   const put=(el,pos,lift)=>{v.copy(pos);v.y+=lift;v.project(camera);if(v.z>1){el.style.display="none";return}el.style.display="";const hw=el.offsetWidth/2+4;el.style.left=Math.min(innerWidth-hw,Math.max(hw,(v.x+1)/2*innerWidth))+"px";el.style.top=((1-v.y)/2*innerHeight)+"px"};
   ISLES.forEach((d,i)=>put(labs[i],d.g.position,4.8));put(hubLab,hub.position,5.6);if(cur>=0)hubLab.style.display="none";
+  // Mobile: keep numbered buttons clear of the header and each other.
+  if(innerWidth<=760){
+    const markers=[...labs,hubLab].filter(el=>el.style.display!=="none");
+    const placed=[];const left=26,right=innerWidth-26,top=112+parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')||0),bottom=innerHeight-145;
+    for(const el of markers){
+      let x=Math.max(left,Math.min(right,parseFloat(el.style.left)||left));
+      let y=Math.max(top,Math.min(bottom,parseFloat(el.style.top)||top));
+      // Deterministic short shifts retain a recognizable link to each island.
+      for(let n=0;n<45;n++){
+        const conflict=placed.find(p=>Math.hypot(x-p.x,y-p.y)<40);
+        if(!conflict)break;
+        const dx=x-conflict.x,dy=y-conflict.y;
+        const angle=Math.atan2(dy||1,dx||((n%2)?1:-1));
+        x=Math.max(left,Math.min(right,x+Math.cos(angle)*12));
+        y=Math.max(top,Math.min(bottom,y+Math.sin(angle)*12));
+      }
+      el.style.left=x+'px';el.style.top=y+'px';placed.push({x,y});
+    }
+  }
   renderer.render(scene,camera);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 window.__test={openWelcome,openFinder,walker,look:(a,b,c,x,y,z)=>{fly=null;controls.autoRotate=false;camera.position.set(a,b,c);controls.target.set(x,y,z)},ITEMS,walkers,people,env,parts,rain,balloons,tour,N_FALL,N_RAIN,applyEnv,get calm(){return calm}};
