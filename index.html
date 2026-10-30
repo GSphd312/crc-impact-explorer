@@ -949,7 +949,7 @@ $("#bHelp").onclick=()=>openWelcome();
 function openWelcome(){$("#welcome").hidden=false;$("#wTour").focus()}
 function closeWelcome(){$("#welcome").hidden=true;try{localStorage.setItem("crcIsland.welcomed","1")}catch(e){}}
 $("#wTour").onclick=()=>{closeWelcome();startTour()};
-$("#wSkip").onclick=()=>{closeWelcome();toast("Start with 01 / Problem Island. Tap any island name to open it.",5000)};
+$("#wSkip").onclick=()=>{closeWelcome();toast("Start with 01 / Why Screening Matters. Tap any island name to open it.",5000)};
 $("#wFind").onclick=()=>{closeWelcome();openFinder()};
 $("#welcome").addEventListener("click",e=>{if(e.target.id==="welcome")closeWelcome()});
 let seen=false;try{seen=localStorage.getItem("crcIsland.welcomed")==="1"}catch(e){}
